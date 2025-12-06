@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sistema de Gestão de Riscos e Projetos (MVP)
 
 Este MVP replica as regras principais da página HTML fornecida usando frontend React/TypeScript (Vite) e backend Node/Express com TypeScript, persistindo em arquivos JSON.
@@ -49,3 +50,6 @@ cd "c:\Users\Yago\OneDrive\Frigorifico\Projetos\Gestão de risco\web"; npm run b
 - Filtros, ordenação, busca e modais mais completos
 - Histórico detalhado e deliberações do comitê
 - Geração de PDF e envio de e-mail (simulado)
+=======
+# Gestao-de-Risco
+>>>>>>> ed8d4bc9387bd475d8d229554eed6bf914e787ee
