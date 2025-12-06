@@ -1,0 +1,10 @@
+{
+  "name": "risk-mgmt-workspace",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "install-all": "cd server; npm install; cd ../web; npm install",
+    "dev": "powershell -Command \"Start-Job -ScriptBlock { cd 'server'; npm run dev }; cd 'web'; npm run dev\""
+  },
+  "devDependencies": {}
+}

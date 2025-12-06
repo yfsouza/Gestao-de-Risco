@@ -1,0 +1,260 @@
+{
+  "empresas": [
+    {
+      "id": "EMP001",
+      "nome": "Matriz Lucas do Rio Verde"
+    },
+    {
+      "id": "EMP002",
+      "nome": "Filial Sinop"
+    }
+  ],
+  "colaboradores": [
+    {
+      "id": "COL001",
+      "nome": "Carlos",
+      "email": "carlos@empresa.com",
+      "empresaId": "EMP001"
+    },
+    {
+      "id": "COL002",
+      "nome": "Ana",
+      "email": "ana@empresa.com",
+      "empresaId": "EMP002"
+    }
+  ],
+  "stakeholdersGrupos": [
+    {
+      "id": "STKGRP001",
+      "nome": "Comitê de Riscos",
+      "emails": [
+        "gestor@empresa.com",
+        "comite@empresa.com"
+      ]
+    }
+  ],
+  "riscos": [
+    {
+      "id": "RSK003",
+      "empresaId": "EMP001",
+      "titulo": "Ausência de colaborador chave",
+      "descricao": "Risco de ausência prolongada afetando operação crítica.",
+      "analistaId": "COL001",
+      "probabilidade": "Alta",
+      "impacto": "Médio",
+      "status": "Mitigando",
+      "matriz": "RH",
+      "historico": [
+        {
+          "data": "2025-12-06T04:24:02.449Z",
+          "evento": "Risco criado (seed)",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T04:24:02.449Z",
+          "evento": "Plano de mitigação iniciado",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "id": "RSK004",
+      "empresaId": "EMP002",
+      "titulo": "Falha de rede de TI",
+      "descricao": "Intermitência na rede pode afetar integrações e ERPs.",
+      "analistaId": "COL002",
+      "probabilidade": "Média",
+      "impacto": "Baixo",
+      "status": "Aberto",
+      "matriz": "Tecnologia",
+      "historico": [
+        {
+          "data": "2025-12-06T04:24:02.449Z",
+          "evento": "Risco criado (seed)",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "id": "RSK005",
+      "empresaId": "EMP001",
+      "titulo": "Não conformidade sanitária",
+      "descricao": "Possível autuação por não conformidade em inspeção.",
+      "analistaId": "COL001",
+      "probabilidade": "Alta",
+      "impacto": "Alto",
+      "status": "Aberto",
+      "matriz": "Regulatório",
+      "historico": [
+        {
+          "data": "2025-12-06T04:24:02.449Z",
+          "evento": "Risco criado (seed)",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "probabilidade": "Alta",
+      "impacto": "Alto",
+      "status": "Aberto",
+      "matriz": "Default",
+      "titulo": "fdfd",
+      "empresaId": "EMP001",
+      "descricao": "fdfdf",
+      "id": "3e009685-48d4-480d-8e4d-4d4c6ffed5ba",
+      "historico": [
+        {
+          "data": "2025-12-06T04:27:05.465Z",
+          "evento": "Risco criado",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T04:27:15.703Z",
+          "evento": "Projeto PRJ-1764995235703 gerado",
+          "autor": "Sistema"
+        }
+      ]
+    }
+  ],
+  "projetos": [
+    {
+      "id": "PRJ001",
+      "titulo": "Plano de contingência da refrigeração",
+      "riscoId": "RSK001",
+      "etapa": "Concluído",
+      "prazo": "2025-12-13T04:24:02.449Z",
+      "responsavelId": "COL001",
+      "escopo": {
+        "objetivo": "Garantir manutenção preventiva e sensores redundantes",
+        "entregas": "Checklist de manutenção; instalação de sensores",
+        "recursos": "Equipe de manutenção; orçamento"
+      },
+      "historico": [
+        {
+          "data": "2025-12-06T04:24:02.449Z",
+          "evento": "Projeto criado (seed)",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T04:25:43.725Z",
+          "evento": "Etapa: Planejamento → Concluído",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "id": "PRJ002",
+      "titulo": "Plano alternativo para embalagens",
+      "riscoId": "RSK002",
+      "etapa": "Concluído",
+      "prazo": "2025-12-09T04:24:02.449Z",
+      "responsavelId": "COL002",
+      "escopo": {
+        "objetivo": "Qualificar fornecedor backup",
+        "entregas": "Contrato assinado; lote teste recebido",
+        "recursos": "Compras; jurídico"
+      },
+      "historico": [
+        {
+          "data": "2025-12-06T04:24:02.449Z",
+          "evento": "Projeto criado (seed)",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T04:25:41.150Z",
+          "evento": "Etapa: Execução → Concluído",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "id": "PRJ003",
+      "titulo": "Treinamento cross para função crítica",
+      "riscoId": "RSK003",
+      "etapa": "Concluído",
+      "prazo": "2025-12-04T04:24:02.449Z",
+      "responsavelId": "COL001",
+      "escopo": {
+        "objetivo": "Cobertura por equipe treinada",
+        "entregas": "Matriz de habilidades atualizada",
+        "recursos": "RH; operação"
+      },
+      "historico": [
+        {
+          "data": "2025-12-06T04:24:02.449Z",
+          "evento": "Projeto criado (seed)",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "id": "PRJ004",
+      "titulo": "Auditoria de processos internos",
+      "etapa": "Backlog",
+      "prazo": "2025-12-20T04:24:02.449Z",
+      "responsavelId": "COL002",
+      "escopo": {
+        "objetivo": "Mapear riscos operacionais sem vínculo direto",
+        "entregas": "Relatório de auditoria",
+        "recursos": "Equipe de qualidade"
+      },
+      "historico": [
+        {
+          "data": "2025-12-06T04:24:02.449Z",
+          "evento": "Projeto criado (seed - sem risco associado)",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "id": "PRJ-1764995109299",
+      "titulo": "Falha de refrigeração na câmara fria",
+      "riscoId": "RSK001",
+      "etapa": "Concluído",
+      "escopo": {
+        "objetivo": "Risco de aumento de temperatura afetando qualidade das carnes."
+      },
+      "historico": [
+        {
+          "data": "2025-12-06T04:25:09.299Z",
+          "evento": "Gerado a partir do risco",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T04:25:45.646Z",
+          "evento": "Etapa: Planejamento → Concluído",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "id": "PRJ-1764995235703",
+      "titulo": "fdfd",
+      "riscoId": "3e009685-48d4-480d-8e4d-4d4c6ffed5ba",
+      "etapa": "Execução",
+      "escopo": {
+        "objetivo": "fdfdf",
+        "entregas": "fdfd",
+        "recursos": "fdfd"
+      },
+      "historico": [
+        {
+          "data": "2025-12-06T04:27:15.703Z",
+          "evento": "Gerado a partir do risco",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T04:27:36.092Z",
+          "evento": "Etapa: Planejamento → Execução",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T04:27:42.792Z",
+          "evento": "Prazo alterado | Escopo alterado",
+          "autor": "Sistema"
+        }
+      ],
+      "prazo": "2025-12-11"
+    }
+  ]
+}
