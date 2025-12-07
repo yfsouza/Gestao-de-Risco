@@ -2,14 +2,17 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { AppState, Empresa, Colaborador, StakeholdersGrupo } from './App';
 import { api } from '../services/api';
 import { Modal } from '../components/Modal';
+import { useToast } from '../components/Toast';
 
 export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void }> = ({ base, setBase }) => {
+  const toast = useToast();
   const [screen, setScreen] = useState<'empresas'|'colaboradores'|'grupos'|'stakeholders'>('empresas');
   const [emp, setEmp] = useState('');
   const [col, setCol] = useState({ nome: '', email: '', empresaId: '' });
   const [grp, setGrp] = useState({ nome: '', descricao: '' });
   const [stk, setStk] = useState({ nome: '', setor: '', email: '', telefone: '' });
   const [stkList, setStkList] = useState<{ id: string; nome: string; setor?: string; email?: string; telefone?: string }[]>([]);
+  const [pessoaTipo, setPessoaTipo] = useState<'todos'|'internos'|'externos'>('externos');
   const [cats, setCats] = useState<{ id: string; nome: string; descricao?: string }[]>([]);
   const [riskCats, setRiskCats] = useState<{ id: string; nome: string; descricao?: string }[]>([]);
   const [filter, setFilter] = useState('');
@@ -31,22 +34,25 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
     const e: Empresa = { id: `EMP${Date.now()}`, nome: emp };
     await fetch('/api/empresas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(e) });
     setEmp(''); reload();
+    toast.show('Empresa cadastrada com sucesso!', 'success');
   };
-  const deleteEmpresa = async (id: string) => { await fetch(`/api/empresas/${id}`, { method: 'DELETE' }); reload(); };
+  const deleteEmpresa = async (id: string) => { await fetch(`/api/empresas/${id}`, { method: 'DELETE' }); reload(); toast.show('Empresa excluída.', 'success'); };
   const openEditEmpresa = (e: Empresa) => { setEditType('empresa'); setEditData({ ...e }); setEditOpen(true); };
   const addColab = async () => {
     const c: Colaborador = { id: `COL${Date.now()}`, ...col } as any;
     await fetch('/api/colaboradores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(c) });
     setCol({ nome: '', email: '', empresaId: '' }); reload();
+    toast.show('Colaborador cadastrado com sucesso!', 'success');
   };
-  const deleteColab = async (id: string) => { await fetch(`/api/colaboradores/${id}`, { method: 'DELETE' }); reload(); };
+  const deleteColab = async (id: string) => { await fetch(`/api/colaboradores/${id}`, { method: 'DELETE' }); reload(); toast.show('Colaborador excluído.', 'success'); };
   const openEditColab = (c: Colaborador) => { setEditType('colaborador'); setEditData({ ...c }); setEditOpen(true); };
   const addGrupo = async () => {
     const g: any = { id: `STK${Date.now()}`, nome: grp.nome, descricao: grp.descricao, participantesColabIds: [], participantesStakeIds: [], fechado: false };
     await fetch('/api/stakeholders-grupos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(g) });
     setGrp({ nome: '', descricao: '' }); reload();
+    toast.show('Grupo criado com sucesso!', 'success');
   };
-  const deleteGrupo = async (id: string) => { await fetch(`/api/stakeholders-grupos/${id}`, { method: 'DELETE' }); reload(); };
+  const deleteGrupo = async (id: string) => { await fetch(`/api/stakeholders-grupos/${id}`, { method: 'DELETE' }); reload(); toast.show('Grupo excluído.', 'success'); };
   const openEditGrupo = (g: any) => { setEditType('grupo'); setEditData({ ...g }); setEditOpen(true); };
 
   const addStakeholder = async () => {
@@ -54,8 +60,9 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
     await api.addStakeholderPessoa(s);
     setStk({ nome: '', setor: '', email: '', telefone: '' });
     api.stakeholdersPessoas().then(setStkList).catch(()=>{});
+    toast.show('Stakeholder cadastrado com sucesso!', 'success');
   };
-  const deleteStakeholder = async (id: string) => { await api.deleteStakeholderPessoa(id); api.stakeholdersPessoas().then(setStkList).catch(()=>{}); };
+  const deleteStakeholder = async (id: string) => { await api.deleteStakeholderPessoa(id); api.stakeholdersPessoas().then(setStkList).catch(()=>{}); toast.show('Stakeholder excluído.', 'success'); };
   const openEditStakeholder = (s: any) => { setEditType('stakeholder'); setEditData({ ...s }); setEditOpen(true); };
 
   const saveEdit = async () => {
@@ -66,27 +73,29 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
         const e: Empresa = { id: editData.id, nome: editData.nome };
         await fetch('/api/empresas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(e) });
         await reload();
+        toast.show('Empresa atualizada com sucesso!', 'success');
       } else if (editType === 'colaborador') {
-        await deleteColab(editData.id);
-        const c: Colaborador = { id: editData.id, nome: editData.nome, email: editData.email, empresaId: editData.empresaId } as any;
-        await fetch('/api/colaboradores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(c) });
+        const c: Partial<Colaborador> = { nome: editData.nome, email: editData.email, empresaId: editData.empresaId } as any;
+        await fetch(`/api/colaboradores/${editData.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(c) });
         await reload();
+        toast.show('Colaborador atualizado com sucesso!', 'success');
       } else if (editType === 'grupo') {
         await deleteGrupo(editData.id);
         const g: StakeholdersGrupo = { id: editData.id, nome: editData.nome, emails: (editData.emailsText||'').split(',').map((s:string)=>s.trim()).filter(Boolean) };
         await fetch('/api/stakeholders-grupos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(g) });
         await reload();
+        toast.show('Grupo atualizado com sucesso!', 'success');
       } else if (editType === 'stakeholder') {
-        await deleteStakeholder(editData.id);
-        const s = { id: editData.id, nome: editData.nome, setor: editData.setor, email: editData.email, telefone: editData.telefone };
-        await api.addStakeholderPessoa(s);
+        const s = { nome: editData.nome, setor: editData.setor, email: editData.email, telefone: editData.telefone };
+        await fetch(`/api/stakeholders/${editData.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(s) });
         await api.stakeholdersPessoas().then(setStkList).catch(()=>{});
+        toast.show('Stakeholder atualizado com sucesso!', 'success');
       }
       setEditOpen(false);
       setEditType(null);
       setEditData(null);
     } catch (e) {
-      // silencioso
+      toast.show('Falha ao salvar alterações.', 'error');
     }
   };
 
@@ -94,6 +103,16 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
   const colaboradoresView = useMemo(() => base.colaboradores.filter(c => (c.nome+' '+c.email).toLowerCase().includes(filter.toLowerCase())), [base.colaboradores, filter]);
   const gruposView = useMemo(() => base.stakeholdersGrupos.filter((g:any) => (g.nome+' '+(g.descricao||'')).toLowerCase().includes(filter.toLowerCase())), [base.stakeholdersGrupos, filter]);
   const stakeholdersView = useMemo(() => stkList.filter(s => (s.nome+' '+(s.setor||'')+' '+(s.email||'')+' '+(s.telefone||'')).toLowerCase().includes(filter.toLowerCase())), [stkList, filter]);
+  const pessoasView = useMemo(() => {
+    const externos = stkList.map(s => ({ ...s, __isInterno: false })) as any[];
+    const internos = (base.colaboradores||[]).map(c => ({ id: c.id, nome: c.nome, setor: (c as any).departamento || '', email: c.email, telefone: '', __isInterno: true, __col: c })) as any[];
+    let all: any[] = [];
+    if (pessoaTipo === 'externos') all = externos;
+    else if (pessoaTipo === 'internos') all = internos;
+    else all = [...internos, ...externos];
+    const term = filter.toLowerCase();
+    return all.filter(s => (s.nome+' '+(s.setor||'')+' '+(s.email||'')+' '+(s.telefone||'')).toLowerCase().includes(term));
+  }, [stkList, base.colaboradores, filter, pessoaTipo]);
   const [participantsOpen, setParticipantsOpen] = useState(false);
   const [participantsGroup, setParticipantsGroup] = useState<any>(null);
   const [selCols, setSelCols] = useState<string[]>([]);
@@ -202,9 +221,9 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
               try {
                 await fetch('/api/empresas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: `EMP${Date.now()}`, nome: razao }) });
                 await reload();
-                alert('Empresa cadastrada com sucesso!');
+                toast.show('Empresa cadastrada com sucesso!', 'success');
                 setEditData({ ...(editData||{}), __showEmpresaForm: false, __empresa_razao: '', __empresa_fantasia: '', __empresa_cnpj: '', __empresa_ie: '', __empresa_ramo: '', __empresa_porte: '', __empresa_email: '', __empresa_tel: '', __empresa_cel: '', __empresa_site: '', __empresa_end: '', __empresa_num: '', __empresa_comp: '', __empresa_bairro: '', __empresa_cidade: '', __empresa_estado: '', __empresa_cep: '', __empresa_obs: '' });
-              } catch {}
+              } catch { toast.show('Falha ao cadastrar empresa.', 'error'); }
             }}>
               <div className="company-icon" style={{ textAlign: 'center', marginBottom: 20, color: '#3498db' }}>
                 <i className="fas fa-landmark" style={{ fontSize: 48, backgroundColor: '#f8f9fa', padding: 20, borderRadius: '50%' }}></i>
@@ -423,18 +442,37 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
                   <button onClick={()=>{ setEditData({ __tipo: 'funcionario', __showForm: true }); }} style={{ fontSize: '13px', padding: '6px 10px' }}><i className="fa-solid fa-plus"></i> Novo Cadastro</button>
                 </div>
               </div>
+              <div style={{ display:'flex', alignItems:'center', gap: 12, marginBottom: 8 }}>
+                <label style={{ display:'flex', alignItems:'center', gap:6, fontSize:12 }}>
+                  <input type="radio" name="filtroPessoa" checked={pessoaTipo==='externos'} onChange={()=>setPessoaTipo('externos')} /> Externos
+                </label>
+                <label style={{ display:'flex', alignItems:'center', gap:6, fontSize:12 }}>
+                  <input type="radio" name="filtroPessoa" checked={pessoaTipo==='internos'} onChange={()=>setPessoaTipo('internos')} /> Internos
+                </label>
+                <label style={{ display:'flex', alignItems:'center', gap:6, fontSize:12 }}>
+                  <input type="radio" name="filtroPessoa" checked={pessoaTipo==='todos'} onChange={()=>setPessoaTipo('todos')} /> Todos
+                </label>
+              </div>
               <div className="table-responsive" style={{ marginBottom: 10 }}>
                 <table className="app-table" style={{ fontSize: '12px' }}>
                   <thead><tr><th>Nome</th><th>Setor</th><th>Email</th><th>Telefone</th><th style={{ width: 90 }}></th></tr></thead>
                   <tbody>
-                    {stakeholdersView.map(s => (
+                    {pessoasView.map((s: any) => (
                       <tr key={s.id}>
                         <td>{s.nome}</td><td>{s.setor||''}</td><td>{s.email||''}</td><td>{s.telefone||''}</td>
                         <td style={{ textAlign:'right' }}>
-                          <button className="btn-outline" title="Editar" onClick={()=>{
-                            setEditData({ __showForm: true, __tipo: 'terceiro', __nome: s.nome||'', __email: s.email||'', __telefone: s.telefone||'', __area_atuacao: s.setor||'' });
-                          }} style={{ padding: '3px 6px' }}><i className="fa-solid fa-pen"></i></button>
-                          <button className="btn-outline" title="Excluir" onClick={()=>deleteStakeholder(s.id)} style={{ padding: '3px 6px' }}><i className="fa-solid fa-trash"></i></button>
+                          {s.__isInterno ? (
+                            <>
+                              <button className="btn-outline" title="Editar" onClick={()=>openEditColab(s.__col)} style={{ padding: '3px 6px' }}><i className="fa-solid fa-pen"></i></button>
+                            </>
+                          ) : (
+                            <>
+                              <button className="btn-outline" title="Editar" onClick={()=>{
+                                setEditData({ __showForm: true, __tipo: 'terceiro', __editId: s.id, __nome: s.nome||'', __email: s.email||'', __telefone: s.telefone||'', __area_atuacao: s.setor||'' });
+                              }} style={{ padding: '3px 6px' }}><i className="fa-solid fa-pen"></i></button>
+                              <button className="btn-outline" title="Excluir" onClick={()=>deleteStakeholder(s.id)} style={{ padding: '3px 6px' }}><i className="fa-solid fa-trash"></i></button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -474,19 +512,33 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
 
             {editData?.__showForm && (
             <form onSubmit={(e)=>{ e.preventDefault(); if (editData?.__tipo==='terceiro') {
-              const payload = { id: `STKP${Date.now()}`, nome: editData?.__nome||'', email: editData?.__email||'', telefone: editData?.__telefone||'', setor: editData?.__area_atuacao||'' };
-              api.addStakeholderPessoa(payload).then(()=>{ api.stakeholdersPessoas().then(setStkList).catch(()=>{}); alert('Terceiro/Stakeholder cadastrado com sucesso!'); setEditData({ __tipo: 'funcionario', __showForm: false }); }).catch(()=>{});
+              const payload = { nome: editData?.__nome||'', email: editData?.__email||'', telefone: editData?.__telefone||'', setor: editData?.__area_atuacao||'' } as any;
+              const id = editData?.__editId as string | undefined;
+              const req = id
+                ? fetch(`/api/stakeholders/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+                : api.addStakeholderPessoa({ id: `STKP${Date.now()}`, ...payload });
+              (req as Promise<any>).then(()=>{
+                api.stakeholdersPessoas().then(setStkList).catch(()=>{});
+                toast.show(id ? 'Stakeholder atualizado com sucesso!' : 'Terceiro/Stakeholder cadastrado com sucesso!', 'success');
+                setEditData({ __tipo: 'funcionario', __showForm: false });
+              }).catch(()=>{ toast.show('Falha ao salvar stakeholder.', 'error'); });
             } else {
-              const novoFunc = {
-                id: `FUNC${Date.now()}`,
+              const empId = (editData?.__empresaId) || ((base.empresas && base.empresas[0] && base.empresas[0].id) ? base.empresas[0].id : 'EMP001');
+              const novoCol: Colaborador = {
+                id: `COL${Date.now()}`,
                 nome: editData?.__nome||'',
                 email: editData?.__email||'',
-                telefone: editData?.__telefone||'',
-                setor: editData?.__departamento||''
-              };
-              setStkList(prev => [novoFunc, ...prev]);
-              alert('Funcionário cadastrado com sucesso!');
-              setEditData({ __tipo: 'funcionario', __showForm: false });
+                empresaId: empId,
+                departamento: editData?.__departamento||''
+              } as any;
+              fetch('/api/colaboradores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(novoCol) })
+                .then(async ()=>{
+                  if (editData?.__editId) { try { await api.deleteStakeholderPessoa(editData.__editId); } catch {} }
+                  reload();
+                  toast.show('Funcionário cadastrado com sucesso!', 'success');
+                  setEditData({ __tipo: 'funcionario', __showForm: false });
+                })
+                .catch(()=>{ toast.show('Falha ao cadastrar funcionário.', 'error'); });
             } }}>
               <div className="form-section" style={{ marginBottom: 4 }}>
                 <div className="section-title" style={{ fontSize: 15, color: '#2c3e50', borderBottom: '1px solid #eaeaea', paddingBottom: 6, marginBottom: 8, display: 'flex', alignItems: 'center' }}>
@@ -520,6 +572,13 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
                     <i className="fas fa-briefcase" style={{ marginRight: 10, color: '#3498db' }}></i> Dados do Funcionário
                   </div>
                   <div className="form-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
+                    <div className="form-group" style={{ flex: 1, minWidth: 220 }}>
+                      <label style={{ fontSize: 12, marginBottom: 4 }}>Empresa</label>
+                      <select value={editData?.__empresaId||''} onChange={e=>setEditData({ ...(editData||{}), __empresaId: e.target.value })} style={{ height: 28, padding: '2px 6px', fontSize: 12 }}>
+                        <option value="">Selecione uma empresa</option>
+                        {base.empresas.map(e=> (<option key={e.id} value={e.id}>{e.nome}</option>))}
+                      </select>
+                    </div>
                     <div className="form-group" style={{ flex: 1, minWidth: 220 }}>
                       <label style={{ fontSize: 12, marginBottom: 4 }}>Departamento</label>
                       <select value={editData?.__departamento||''} onChange={e=>setEditData({ ...(editData||{}), __departamento: e.target.value })} style={{ height: 28, padding: '2px 6px', fontSize: 12 }}>

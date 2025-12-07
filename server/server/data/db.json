@@ -29,6 +29,52 @@
       "nome": "k",
       "email": "k",
       "empresaId": ""
+    },
+    {
+      "id": "COL011",
+      "nome": "Helena",
+      "email": "helena@empresa.com",
+      "empresaId": "EMP010"
+    },
+    {
+      "id": "COL012",
+      "nome": "Miguel",
+      "email": "miguel@empresa.com",
+      "empresaId": "EMP009"
+    },
+    {
+      "id": "COL013",
+      "nome": "Isabela",
+      "email": "isabela@empresa.com",
+      "empresaId": "EMP008"
+    },
+    {
+      "id": "COL1765081859020",
+      "nome": "Fornecedor A",
+      "email": "fornecedorA@exemplo.com",
+      "empresaId": "EMP001",
+      "departamento": "ti"
+    },
+    {
+      "id": "COL1765082099628",
+      "nome": "Auditor B",
+      "email": "auditorB@exemplo.com",
+      "empresaId": "EMP001",
+      "departamento": ""
+    },
+    {
+      "id": "COL1765082163244",
+      "nome": "Cliente C",
+      "email": "clienteC@exemplo.com",
+      "empresaId": "EMP001",
+      "departamento": ""
+    },
+    {
+      "id": "COL1765082322186",
+      "nome": "d",
+      "email": "ddddddddddddd@gggggggggggggggg",
+      "empresaId": "EMP001",
+      "departamento": "ti"
     }
   ],
   "stakeholdersGrupos": [
@@ -77,6 +123,11 @@
         {
           "data": "2025-12-06T17:44:28.811Z",
           "evento": "Projeto PRJ-1765043068811 gerado",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T04:44:05.123Z",
+          "evento": "Projeto PRJ-1765082645123 gerado",
           "autor": "Sistema"
         }
       ]
@@ -434,6 +485,41 @@
           "autor": "Sistema"
         }
       ]
+    },
+    {
+      "id": "PRJ-1765082645123",
+      "titulo": "Ausência de colaborador chave",
+      "riscoId": "RSK003",
+      "etapa": "Planejamento",
+      "escopo": {
+        "objetivo": "Risco de ausência prolongada afetando operação crítica."
+      },
+      "historico": [
+        {
+          "data": "2025-12-07T04:44:05.123Z",
+          "evento": "Gerado a partir do risco",
+          "autor": "Sistema"
+        }
+      ]
+    }
+  ],
+  "stakeholders": [],
+  "categoriasRisco": [
+    {
+      "id": "CAT011",
+      "nome": "Opera��es Cr�ticas"
+    },
+    {
+      "id": "CAT012",
+      "nome": "Cibern�tico"
+    },
+    {
+      "id": "CAT013",
+      "nome": "Seguran�a F�sica"
+    },
+    {
+      "nome": "h",
+      "descricao": "h"
     }
   ]
 }

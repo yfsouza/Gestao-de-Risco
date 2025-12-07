@@ -2,16 +2,74 @@
   "empresas": [
     { "id": "EMP001", "nome": "Matriz Lucas do Rio Verde" },
     { "id": "EMP002", "nome": "Filial Sinop" },
-    { "id": "EMP003", "nome": "Unidade Sorriso" }
+    { "id": "EMP003", "nome": "Unidade Sorriso" },
+    { "id": "EMP004", "nome": "Unidade Várzea Grande" },
+    { "id": "EMP005", "nome": "Unidade Rondonópolis" },
+    { "id": "EMP006", "nome": "Unidade Cuiabá" },
+    { "id": "EMP007", "nome": "Unidade Nova Mutum" },
+    { "id": "EMP008", "nome": "Unidade Tangará" },
+    { "id": "EMP009", "nome": "Unidade Barra do Garças" },
+    { "id": "EMP010", "nome": "Unidade Primavera do Leste" }
   ],
   "colaboradores": [
     { "id": "COL001", "nome": "Carlos", "email": "carlos@empresa.com", "empresaId": "EMP001" },
     { "id": "COL002", "nome": "Ana", "email": "ana@empresa.com", "empresaId": "EMP002" },
-    { "id": "COL003", "nome": "Marina", "email": "marina@empresa.com", "empresaId": "EMP003" }
+    { "id": "COL003", "nome": "Marina", "email": "marina@empresa.com", "empresaId": "EMP003" },
+    { "id": "COL004", "nome": "Yago", "email": "yago@empresa.com", "empresaId": "EMP001" },
+    { "id": "COL005", "nome": "Bruna", "email": "bruna@empresa.com", "empresaId": "EMP004" },
+    { "id": "COL006", "nome": "Rafael", "email": "rafael@empresa.com", "empresaId": "EMP005" },
+    { "id": "COL007", "nome": "Sofia", "email": "sofia@empresa.com", "empresaId": "EMP006" },
+    { "id": "COL008", "nome": "Pedro", "email": "pedro@empresa.com", "empresaId": "EMP007" },
+    { "id": "COL009", "nome": "João", "email": "joao@empresa.com", "empresaId": "EMP008" },
+    { "id": "COL010", "nome": "Luiza", "email": "luiza@empresa.com", "empresaId": "EMP009" }
   ],
   "stakeholdersGrupos": [
     { "id": "STKGRP001", "nome": "Comitê de Riscos", "emails": ["gestor@empresa.com", "comite@empresa.com"] },
-    { "id": "STKGRP002", "nome": "Diretoria", "emails": ["diretoria@empresa.com"] }
+    { "id": "STKGRP002", "nome": "Diretoria", "emails": ["diretoria@empresa.com"] },
+    { "id": "STKGRP003", "nome": "Operações", "emails": ["operacoes@empresa.com"] },
+    { "id": "STKGRP004", "nome": "Qualidade", "emails": ["qualidade@empresa.com"] },
+    { "id": "STKGRP005", "nome": "Financeiro", "emails": ["financeiro@empresa.com"] },
+    { "id": "STKGRP006", "nome": "Jurídico", "emails": ["juridico@empresa.com"] },
+    { "id": "STKGRP007", "nome": "Logística", "emails": ["logistica@empresa.com"] },
+    { "id": "STKGRP008", "nome": "Comercial", "emails": ["comercial@empresa.com"] },
+    { "id": "STKGRP009", "nome": "TI", "emails": ["ti@empresa.com"] },
+    { "id": "STKGRP010", "nome": "Segurança do Trabalho", "emails": ["seguranca@empresa.com"] }
+  ],
+  "stakeholders": [
+    { "id": "STK001", "nome": "Gestor de Qualidade", "setor": "Qualidade", "email": "qualidade@empresa.com", "telefone": "(65) 9000-0001" },
+    { "id": "STK002", "nome": "Gestor de TI", "setor": "TI", "email": "ti@empresa.com", "telefone": "(65) 9000-0002" },
+    { "id": "STK003", "nome": "Gestor de Operações", "setor": "Operações", "email": "operacoes@empresa.com", "telefone": "(65) 9000-0003" },
+    { "id": "STK004", "nome": "Gestor de Logística", "setor": "Logística", "email": "logistica@empresa.com", "telefone": "(65) 9000-0004" },
+    { "id": "STK005", "nome": "Gestor Financeiro", "setor": "Financeiro", "email": "financeiro@empresa.com", "telefone": "(65) 9000-0005" },
+    { "id": "STK006", "nome": "Gestor Jurídico", "setor": "Jurídico", "email": "juridico@empresa.com", "telefone": "(65) 9000-0006" },
+    { "id": "STK007", "nome": "Gestor Comercial", "setor": "Comercial", "email": "comercial@empresa.com", "telefone": "(65) 9000-0007" },
+    { "id": "STK008", "nome": "Engenheiro de Segurança", "setor": "Segurança do Trabalho", "email": "seguranca@empresa.com", "telefone": "(65) 9000-0008" },
+    { "id": "STK009", "nome": "Analista de Dados", "setor": "TI", "email": "dados@empresa.com", "telefone": "(65) 9000-0009" },
+    { "id": "STK010", "nome": "Coordenador de Projetos", "setor": "PMO", "email": "pmo@empresa.com", "telefone": "(65) 9000-0010" }
+  ],
+  "categorias": [
+    { "id": "CATA001", "nome": "Processos" },
+    { "id": "CATA002", "nome": "Produtos" },
+    { "id": "CATA003", "nome": "Serviços" },
+    { "id": "CATA004", "nome": "Atendimento" },
+    { "id": "CATA005", "nome": "Jurídico" },
+    { "id": "CATA006", "nome": "Infraestrutura" },
+    { "id": "CATA007", "nome": "Segurança" },
+    { "id": "CATA008", "nome": "Marketing" },
+    { "id": "CATA009", "nome": "Financeiro" },
+    { "id": "CATA010", "nome": "Operações" }
+  ],
+  "categoriasRisco": [
+    { "id": "CAT001", "nome": "Operacional" },
+    { "id": "CAT002", "nome": "Tecnologia" },
+    { "id": "CAT003", "nome": "Supply" },
+    { "id": "CAT004", "nome": "RH" },
+    { "id": "CAT005", "nome": "Regulatório" },
+    { "id": "CAT006", "nome": "Financeiro" },
+    { "id": "CAT007", "nome": "Ambiental" },
+    { "id": "CAT008", "nome": "Segurança" },
+    { "id": "CAT009", "nome": "Compliance" },
+    { "id": "CAT010", "nome": "Estratégico" }
   ],
   "riscos": [
     {
@@ -85,6 +143,76 @@
       "historico": [
         { "data": "2025-12-06T10:20:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" }
       ]
+    },
+    {
+      "id": "RSK006",
+      "empresaId": "EMP004",
+      "titulo": "Interrupção de fornecimento elétrico",
+      "descricao": "Queda de energia pode afetar produção.",
+      "analistaId": "COL005",
+      "probabilidade": "Alta",
+      "impacto": "Alto",
+      "status": "Aberto",
+      "matriz": "Operacional",
+      "historico": [
+        { "data": "2025-12-06T12:10:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "RSK007",
+      "empresaId": "EMP005",
+      "titulo": "Risco logístico rodoviário",
+      "descricao": "Atrasos por problemas na BR.",
+      "analistaId": "COL006",
+      "probabilidade": "Média",
+      "impacto": "Médio",
+      "status": "Mitigando",
+      "matriz": "Supply",
+      "historico": [
+        { "data": "2025-12-06T12:20:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "RSK008",
+      "empresaId": "EMP006",
+      "titulo": "Falha de IoT sensores",
+      "descricao": "Sensores não reportam dados.",
+      "analistaId": "COL007",
+      "probabilidade": "Baixa",
+      "impacto": "Médio",
+      "status": "Aberto",
+      "matriz": "Tecnologia",
+      "historico": [
+        { "data": "2025-12-06T12:30:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "RSK009",
+      "empresaId": "EMP007",
+      "titulo": "Não conformidade ambiental",
+      "descricao": "Risco de autuação por descarte inadequado.",
+      "analistaId": "COL008",
+      "probabilidade": "Média",
+      "impacto": "Alto",
+      "status": "Aberto",
+      "matriz": "Regulatório",
+      "historico": [
+        { "data": "2025-12-06T12:40:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "RSK010",
+      "empresaId": "EMP008",
+      "titulo": "Falha de comunicação entre sistemas",
+      "descricao": "Integrações entre ERPs instáveis.",
+      "analistaId": "COL009",
+      "probabilidade": "Alta",
+      "impacto": "Médio",
+      "status": "Mitigando",
+      "matriz": "Tecnologia",
+      "historico": [
+        { "data": "2025-12-06T12:50:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" }
+      ]
     }
   ],
   "projetos": [
@@ -149,6 +277,101 @@
       },
       "historico": [
         { "data": "2025-12-06T10:45:00.000Z", "evento": "Projeto criado (seed - sem risco associado)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "PRJ005",
+      "titulo": "Backup de Energia",
+      "riscoId": "RSK006",
+      "etapa": "Planejamento",
+      "prazo": "2026-01-20T00:00:00.000Z",
+      "responsavelId": "COL005",
+      "escopo": {
+        "objetivo": "Instalar gerador",
+        "entregas": "Gerador instalado",
+        "recursos": "Manutenção"
+      },
+      "historico": [
+        { "data": "2025-12-06T13:00:00.000Z", "evento": "Projeto criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "PRJ006",
+      "titulo": "Plano Logístico Alternativo",
+      "riscoId": "RSK007",
+      "etapa": "Execução",
+      "prazo": "2025-12-17T00:00:00.000Z",
+      "responsavelId": "COL006",
+      "escopo": {
+        "objetivo": "Rotas alternativas",
+        "entregas": "Mapa e contratos",
+        "recursos": "Logística"
+      },
+      "historico": [
+        { "data": "2025-12-06T13:05:00.000Z", "evento": "Projeto criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "PRJ007",
+      "titulo": "Auditoria de Sensores",
+      "riscoId": "RSK008",
+      "etapa": "Backlog",
+      "prazo": "2026-01-15T00:00:00.000Z",
+      "responsavelId": "COL007",
+      "escopo": {
+        "objetivo": "Auditar rede IoT",
+        "entregas": "Relatório auditoria",
+        "recursos": "TI"
+      },
+      "historico": [
+        { "data": "2025-12-06T13:10:00.000Z", "evento": "Projeto criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "PRJ008",
+      "titulo": "Programa de Conformidade Ambiental",
+      "riscoId": "RSK009",
+      "etapa": "Planejamento",
+      "prazo": "2026-02-01T00:00:00.000Z",
+      "responsavelId": "COL008",
+      "escopo": {
+        "objetivo": "Adequar processos de descarte",
+        "entregas": "Plano e treinamentos",
+        "recursos": "Qualidade e Meio Ambiente"
+      },
+      "historico": [
+        { "data": "2025-12-06T13:15:00.000Z", "evento": "Projeto criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "PRJ009",
+      "titulo": "Integração de Sistemas",
+      "riscoId": "RSK010",
+      "etapa": "Execução",
+      "prazo": "2026-01-05T00:00:00.000Z",
+      "responsavelId": "COL009",
+      "escopo": {
+        "objetivo": "Estabilizar integrações ERPs",
+        "entregas": "Monitoramento e correções",
+        "recursos": "TI"
+      },
+      "historico": [
+        { "data": "2025-12-06T13:20:00.000Z", "evento": "Projeto criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "PRJ010",
+      "titulo": "Padronização de Processos",
+      "etapa": "Backlog",
+      "prazo": "2026-02-10T00:00:00.000Z",
+      "responsavelId": "COL010",
+      "escopo": {
+        "objetivo": "Criar manuais operacionais",
+        "entregas": "Manuais publicados",
+        "recursos": "Operações"
+      },
+      "historico": [
+        { "data": "2025-12-06T13:25:00.000Z", "evento": "Projeto criado (seed - sem risco associado)", "autor": "Sistema" }
       ]
     }
   ]

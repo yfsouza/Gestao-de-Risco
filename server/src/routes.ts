@@ -13,7 +13,14 @@ router.delete('/empresas/:id', (req, res) => { store.deleteEmpresa(req.params.id
 // Colaboradores
 router.get('/colaboradores', (req, res) => res.json(store.getColaboradores()));
 router.post('/colaboradores', (req, res) => res.json(store.addColaborador(req.body)));
+router.put('/colaboradores/:id', (req, res) => {
+  const c = store.updateColaborador(req.params.id, req.body);
+  if (!c) return res.sendStatus(404);
+  res.json(c);
+});
 router.delete('/colaboradores/:id', (req, res) => { store.deleteColaborador(req.params.id); res.sendStatus(204); });
+// Pessoas internas (alias)
+router.get('/pessoas-internas', (req, res) => res.json(store.getColaboradores()));
 
 // Stakeholders
 router.get('/stakeholders-grupos', (req, res) => res.json(store.getStakeholdersGrupos()));
@@ -37,7 +44,24 @@ router.post('/stakeholders-grupos/:id/abrir', (req, res) => {
 });
 router.get('/stakeholders', (req, res) => res.json(store.getStakeholders()));
 router.post('/stakeholders', (req, res) => res.json(store.addStakeholder(req.body)));
+router.put('/stakeholders/:id', (req, res) => {
+  const s = store.updateStakeholder(req.params.id, req.body);
+  if (!s) return res.sendStatus(404);
+  res.json(s);
+});
 router.delete('/stakeholders/:id', (req, res) => { store.deleteStakeholder(req.params.id); res.sendStatus(204); });
+// Pessoas externas (alias)
+router.get('/pessoas-externas', (req, res) => res.json(store.getStakeholders()));
+
+// Categorias de risco
+router.get('/categorias-risco', (req, res) => res.json(store.getCategoriasRisco()));
+router.post('/categorias-risco', (req, res) => res.json(store.addCategoriaRisco(req.body)));
+router.delete('/categorias-risco/:id', (req, res) => { store.deleteCategoriaRisco(req.params.id); res.sendStatus(204); });
+
+// Categorias (genéricas)
+router.get('/categorias', (req, res) => res.json(store.getCategorias()));
+router.post('/categorias', (req, res) => res.json(store.addCategoria(req.body)));
+router.delete('/categorias/:id', (req, res) => { store.deleteCategoria(req.params.id); res.sendStatus(204); });
 
 // Riscos
 router.get('/riscos', (req, res) => res.json(store.getRiscos()));

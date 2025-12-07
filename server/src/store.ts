@@ -5,7 +5,7 @@ const dataDir = path.join(process.cwd(), 'server', 'data');
 const filePath = path.join(dataDir, 'db.json');
 
 type Empresa = { id: string; nome: string };
-type Colaborador = { id: string; nome: string; email: string; empresaId: string };
+type Colaborador = { id: string; nome: string; email: string; empresaId: string; departamento?: string };
 type StakeholdersGrupo = {
   id: string;
   nome: string;
@@ -15,6 +15,8 @@ type StakeholdersGrupo = {
   fechado?: boolean;
 };
 type Stakeholder = { id: string; nome: string; setor?: string; email?: string; telefone?: string };
+type CategoriaRisco = { id: string; nome: string; descricao?: string };
+type Categoria = { id: string; nome: string; descricao?: string };
 
 type Risco = {
   id: string;
@@ -45,6 +47,8 @@ type DB = {
   colaboradores: Colaborador[];
   stakeholdersGrupos: StakeholdersGrupo[];
   stakeholders?: Stakeholder[];
+  categorias?: Categoria[];
+  categoriasRisco?: CategoriaRisco[];
   riscos: Risco[];
   projetos: Projeto[];
 };
@@ -67,6 +71,18 @@ const ensureData = () => {
       stakeholders: [
         { id: 'STK001', nome: 'Gestor de Qualidade', setor: 'Qualidade', email: 'qualidade@empresa.com', telefone: '(65) 9000-0001' },
         { id: 'STK002', nome: 'Gestor de TI', setor: 'TI', email: 'ti@empresa.com', telefone: '(65) 9000-0002' }
+      ],
+      categorias: [
+        { id: 'CATA001', nome: 'Processos' },
+        { id: 'CATA002', nome: 'Produtos' },
+        { id: 'CATA003', nome: 'Serviços' }
+      ],
+      categoriasRisco: [
+        { id: 'CAT001', nome: 'Operacional' },
+        { id: 'CAT002', nome: 'Tecnologia' },
+        { id: 'CAT003', nome: 'Supply' },
+        { id: 'CAT004', nome: 'RH' },
+        { id: 'CAT005', nome: 'Regulatório' }
       ],
       riscos: [
         {
@@ -192,6 +208,14 @@ export class DataStore {
 
   getColaboradores() { return readDB().colaboradores; }
   addColaborador(c: Colaborador) { const db = readDB(); db.colaboradores.push(c); writeDB(db); return c; }
+  updateColaborador(id: string, c: Partial<Colaborador>) {
+    const db = readDB();
+    const i = db.colaboradores.findIndex(e=>e.id===id);
+    if (i<0) return null;
+    db.colaboradores[i] = { ...db.colaboradores[i], ...c } as Colaborador;
+    writeDB(db);
+    return db.colaboradores[i];
+  }
   deleteColaborador(id: string) { const db = readDB(); db.colaboradores = db.colaboradores.filter(e => e.id !== id); writeDB(db); }
 
   getStakeholdersGrupos() { return readDB().stakeholdersGrupos; }
@@ -227,7 +251,26 @@ export class DataStore {
 
   getStakeholders() { const db = readDB(); return db.stakeholders || []; }
   addStakeholder(s: Stakeholder) { const db = readDB(); db.stakeholders = db.stakeholders || []; db.stakeholders.push(s); writeDB(db); return s; }
+  updateStakeholder(id: string, s: Partial<Stakeholder>) {
+    const db = readDB();
+    db.stakeholders = db.stakeholders || [];
+    const i = db.stakeholders.findIndex(e=>e.id===id);
+    if (i<0) return null;
+    db.stakeholders[i] = { ...db.stakeholders[i], ...s } as Stakeholder;
+    writeDB(db);
+    return db.stakeholders[i];
+  }
   deleteStakeholder(id: string) { const db = readDB(); db.stakeholders = (db.stakeholders || []).filter(e => e.id !== id); writeDB(db); }
+
+  // Categorias de Risco
+  getCategoriasRisco() { const db = readDB(); return db.categoriasRisco || []; }
+  addCategoriaRisco(c: CategoriaRisco) { const db = readDB(); db.categoriasRisco = db.categoriasRisco || []; db.categoriasRisco.push(c); writeDB(db); return c; }
+  deleteCategoriaRisco(id: string) { const db = readDB(); db.categoriasRisco = (db.categoriasRisco || []).filter(e => e.id !== id); writeDB(db); }
+
+  // Categorias (genéricas)
+  getCategorias() { const db = readDB(); return db.categorias || []; }
+  addCategoria(c: Categoria) { const db = readDB(); db.categorias = db.categorias || []; const item = { id: c.id || `CAT-${Date.now()}`, nome: c.nome, descricao: c.descricao }; db.categorias.push(item); writeDB(db); return item; }
+  deleteCategoria(id: string) { const db = readDB(); db.categorias = (db.categorias || []).filter(e => e.id !== id); writeDB(db); }
 
   getRiscos() { return readDB().riscos; }
   getRisco(id: string) { return readDB().riscos.find(r => r.id === id) || null; }
