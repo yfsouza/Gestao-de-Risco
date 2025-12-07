@@ -1,0 +1,1 @@
+{"root":["./src/main.tsx","./src/components/modal.tsx","./src/components/toast.tsx","./src/modules/adminpage.tsx","./src/modules/app.tsx","./src/modules/committeepage.tsx","./src/modules/projectspage.tsx","./src/modules/reportspage.tsx","./src/modules/riskspage.tsx","./src/services/api.ts","./src/utils/badges.ts"],"errors":true,"version":"5.9.3"}

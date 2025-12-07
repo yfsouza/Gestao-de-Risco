@@ -16,13 +16,18 @@ export const api = {
   empresas: () => req('/api/empresas'),
   colaboradores: () => req('/api/colaboradores'),
   stakeholders: () => req('/api/stakeholders-grupos'),
+  stakeholdersPessoas: () => req('/api/stakeholders'),
+  addStakeholderPessoa: (data: any) => req('/api/stakeholders', 'POST', data),
+  deleteStakeholderPessoa: (id: string) => req(`/api/stakeholders/${id}`, 'DELETE'),
 
   // Riscos
   riscos: () => req('/api/riscos'),
+  risco: (id: string) => req(`/api/riscos/${id}`),
   addRisco: (data: any) => req('/api/riscos', 'POST', data),
   updateRisco: (id: string, data: any) => req(`/api/riscos/${id}`, 'PUT', data),
   deleteRisco: (id: string) => req(`/api/riscos/${id}`, 'DELETE'),
   gerarProjeto: (id: string) => req(`/api/riscos/${id}/gerar-projeto`, 'POST'),
+  informarOcorrencia: (id: string, data: { data?: string; impedimento: string; acoes: string; responsavel: string; stakeholdersGruposIds?: string[]; stakeholdersIds?: string[] }) => req(`/api/riscos/${id}/ocorrencias`, 'POST', data),
 
   // Projetos
   projetos: () => req('/api/projetos'),

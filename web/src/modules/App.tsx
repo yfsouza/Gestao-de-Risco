@@ -7,7 +7,14 @@ import { AdminPage } from './AdminPage';
 
 export type Empresa = { id: string; nome: string };
 export type Colaborador = { id: string; nome: string; email: string; empresaId: string };
-export type StakeholdersGrupo = { id: string; nome: string; emails: string[] };
+export type StakeholdersGrupo = {
+  id: string;
+  nome: string;
+  descricao?: string;
+  participantesColabIds?: string[];
+  participantesStakeIds?: string[];
+  fechado?: boolean;
+};
 export type Risco = {
   id: string;
   empresaId: string;
@@ -56,7 +63,7 @@ export const App: React.FC = () => {
           <div className="logo"><i className="fa-solid fa-shield-halved"></i> Gestão de Risco</div>
           <nav className="app-nav">
             <ul>
-              {['risks','projects','committee','reports','admin'].map(k => (
+              {['risks','committee','projects','reports','admin'].map(k => (
                 <li key={k}>
                   <button className={screen===k? 'active' : ''} onClick={() => setScreen(k as any)}>
                     <i className={
@@ -65,7 +72,7 @@ export const App: React.FC = () => {
                       k==='committee' ? 'fa-solid fa-users' :
                       k==='reports' ? 'fa-solid fa-chart-line' : 'fa-solid fa-gear'
                     }></i>
-                    {k === 'risks' ? 'Riscos' : k === 'projects' ? 'Projetos' : k === 'committee' ? 'Comitê' : k === 'reports' ? 'Relatórios' : 'Admin'}
+                    {k === 'risks' ? 'Riscos' : k === 'projects' ? 'Projetos' : k === 'committee' ? 'Comitê' : k === 'reports' ? 'Relatórios' : 'Configurações'}
                   </button>
                 </li>
               ))}

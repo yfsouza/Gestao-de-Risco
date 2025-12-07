@@ -1,3 +1,10 @@
+.config-header {
+  background: #2c3e50;
+  color: #fff;
+  padding: 10px 12px;
+}
+.config-header h3 { font-size: 16px; margin: 0; }
+.config-header p { opacity: 0.9; margin-top: 2px; font-size: 11px; }
 :root {
   --primary: #2c3e50;
   --secondary: #3498db;
@@ -42,6 +49,11 @@ table.app-table tr:hover { background: #f8f9fa; }
 
 .badge { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-align: center; }
 
+.config-container {
+  font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 12px;
+  color: #2c3e50;
+}
 .kanban-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
 .kanban-column { background-color: #f8f9fa; border-radius: var(--border-radius); padding: 1rem; min-height: 500px; }
 .kanban-card { background-color: #fff; border-radius: var(--border-radius); box-shadow: var(--shadow); padding: 1rem; margin-bottom: 1rem; }
@@ -56,6 +68,25 @@ button:disabled { background: var(--gray); cursor: not-allowed; }
 input, select, textarea { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 0.5rem 0.7rem; box-shadow: inset 0 1px 2px rgba(0,0,0,0.03); }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(52,152,219,0.15); }
 
+.form-compact label {
+  font-size: 12px;
+  margin-bottom: 4px;
+  display: block;
+}
+.form-compact input,
+.form-compact select,
+.form-compact textarea {
+  height: 26px;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.form-compact textarea { height: auto; }
+.form-compact .form-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:6px; }
+.form-compact .form-group { flex:1; min-width:220px; }
+.form-compact .buttons { display:flex; justify-content:flex-end; gap:6px; margin-top:6px; padding-top:6px; border-top:1px solid #eee; }
+.form-compact .btn-compact { padding:5px 8px; font-size:12px; border-radius:6px; }
 /* Variants */
 .btn-primary { background: var(--secondary); color: #fff; }
 .btn-danger { background: var(--danger); color: #fff; }
