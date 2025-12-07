@@ -8,6 +8,8 @@ import { api } from '../services/api';
 export const RisksPage: React.FC<{ base: AppState }> = ({ base }) => {
   const [riscos, setRiscos] = useState<Risco[]>([]);
   const [form, setForm] = useState<Partial<Risco>>({ probabilidade: '3-Média', impacto: '3-Médio', status: 'Aberto' });
+  const [cats, setCats] = useState<{ id: string; nome: string; descricao?: string }[]>([]);
+  const [riskCats, setRiskCats] = useState<{ id: string; nome: string; descricao?: string }[]>([]);
   const [busca, setBusca] = useState('');
   const [fEmpresa, setFEmpresa] = useState('');
   const [fStatus, setFStatus] = useState('');
@@ -15,18 +17,29 @@ export const RisksPage: React.FC<{ base: AppState }> = ({ base }) => {
   const [sort, setSort] = useState<{ col: 'titulo'|'status'|'empresa'|'probabilidade'|'impacto'|'matriz'; dir: 'asc'|'desc' }|null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyRisk, setHistoryRisk] = useState<Risco | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const toast = useToast();
 
   const load = () => api.riscos().then(setRiscos).catch(()=>setRiscos([]));
   useEffect(() => { load(); }, []);
+  useEffect(() => {
+    fetch('/api/categorias').then(r=>r.json()).then(setCats).catch(()=>setCats([]));
+    fetch('/api/categorias-risco').then(r=>r.json()).then(setRiskCats).catch(()=>setRiskCats([]));
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const nivel = nivelFrom(form.probabilidade as string, form.impacto as string);
       const payload = { ...form, matriz: nivel } as Partial<Risco>;
-      await api.addRisco(payload);
-      toast.show('Risco salvo com sucesso', 'success');
+      if (editingId) {
+        await api.updateRisco(editingId, payload);
+        toast.show('Risco atualizado com sucesso', 'success');
+        setEditingId(null);
+      } else {
+        await api.addRisco(payload);
+        toast.show('Risco salvo com sucesso', 'success');
+      }
       setForm({ probabilidade: '3-Média', impacto: '3-Médio', status: 'Aberto' });
       load();
     } catch { toast.show('Erro ao salvar risco', 'error'); }
@@ -143,6 +156,20 @@ export const RisksPage: React.FC<{ base: AppState }> = ({ base }) => {
               </select>
             </div>
             <div className="form-group">
+              <label>Categoria</label>
+              <select value={(form as any).categoriaId||''} onChange={e=>setForm(f=>({ ...f, categoriaId: e.target.value }))}>
+                <option value="">Nenhuma</option>
+                {cats.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Categoria do Risco</label>
+              <select value={(form as any).categoriaRiscoId||''} onChange={e=>setForm(f=>({ ...f, categoriaRiscoId: e.target.value }))}>
+                <option value="">Nenhuma</option>
+                {riskCats.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
+              </select>
+            </div>
+            <div className="form-group">
               <label>Nível de risco (Probabilidade x Impacto)</label>
               {(() => { const nivel = nivelFrom(form.probabilidade as string, form.impacto as string); const c = nivelBadge(nivel); return <span className="badge" style={badgeStyle(c.bg, c.fg)}>{nivel}</span>; })()}
             </div>
@@ -202,7 +229,13 @@ export const RisksPage: React.FC<{ base: AppState }> = ({ base }) => {
                   <td>{(() => { const c = probImpactBadge(r.impacto); return <span className="badge" style={badgeStyle(c.bg, c.fg)}>{r.impacto}</span>; })()}</td>
                   <td>{(() => { const nivel = nivelFrom(r.probabilidade, r.impacto); const c = nivelBadge(nivel); return <span className="badge" style={badgeStyle(c.bg, c.fg)}>{nivel}</span>; })()}</td>
                   <td>
-                    <button className="btn-success btn-small" onClick={()=>gerarProjeto(r.id)}><i className="fa-solid fa-diagram-project"></i> Gerar Projeto</button>
+                    <button className="btn-outline btn-small" onClick={()=>{
+                      // abrir modo de edição preenchendo o formulário
+                      setEditingId(r.id);
+                      setForm({ empresaId: r.empresaId, responsavelId: (r as any).responsavelId || r.analistaId, titulo: r.titulo, descricao: r.descricao, probabilidade: r.probabilidade as any, impacto: r.impacto as any, status: r.status, matriz: r.matriz, categoriaId: (r as any).categoriaId, categoriaRiscoId: (r as any).categoriaRiscoId });
+                      // scroll to top where the form is
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}><i className="fa-solid fa-pen"></i> Editar</button>
                     <button className="btn-outline btn-small" onClick={()=>openHistory(r)}><i className="fa-solid fa-clock-rotate-left"></i> Histórico</button>
                     <button className="btn-danger btn-small" onClick={async()=>{ if (confirm('Deseja excluir este risco?')) { try { await api.deleteRisco(r.id); toast.show('Risco excluído', 'success'); load(); } catch { toast.show('Erro ao excluir', 'error'); } } }}><i className="fa-solid fa-trash"></i> Excluir</button>
                   </td>

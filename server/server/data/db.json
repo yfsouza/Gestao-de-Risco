@@ -266,6 +266,26 @@
           "autor": "Sistema"
         }
       ]
+    },
+    {
+      "probabilidade": "3-Média",
+      "impacto": "3-Médio",
+      "status": "Aberto",
+      "categoriaId": "CAT-1765114247308",
+      "categoriaRiscoId": "CAT012",
+      "empresaId": "EMP001",
+      "responsavelId": "COL012",
+      "titulo": "  123456",
+      "descricao": "eeee",
+      "matriz": "Médio",
+      "id": "381e4baf-eba2-4dbf-88d7-4229a18ca659",
+      "historico": [
+        {
+          "data": "2025-12-07T13:31:24.249Z",
+          "evento": "Risco criado",
+          "autor": "Sistema"
+        }
+      ]
     }
   ],
   "projetos": [
@@ -506,10 +526,6 @@
   "stakeholders": [],
   "categoriasRisco": [
     {
-      "id": "CAT011",
-      "nome": "Opera��es Cr�ticas"
-    },
-    {
       "id": "CAT012",
       "nome": "Cibern�tico"
     },
@@ -520,6 +536,16 @@
     {
       "nome": "h",
       "descricao": "h"
+    },
+    {
+      "nome": "Opera��es Cr�ticas"
+    }
+  ],
+  "categorias": [
+    {
+      "id": "CAT-1765114247308",
+      "nome": "aa",
+      "descricao": "aa"
     }
   ]
 }

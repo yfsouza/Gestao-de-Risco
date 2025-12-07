@@ -725,38 +725,75 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
             <h3><i className="fas fa-tags"></i> Cadastro de Categoria</h3>
             <p>Crie e edite categorias</p>
           </div>
-          <div className="form-compact" style={{ padding: 10 }}>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Nome</label>
-                <input placeholder="Nome" value={(editData?.__catNome)||''} onChange={e=>setEditData({ ...(editData||{}), __catNome: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Descrição</label>
-                <input placeholder="Descrição" value={(editData?.__catDesc)||''} onChange={e=>setEditData({ ...(editData||{}), __catDesc: e.target.value })} />
-              </div>
-            </div>
-            <div className="buttons">
-              <button onClick={async ()=>{
-                const payload = { nome: editData?.__catNome||'', descricao: editData?.__catDesc||'' };
-                await fetch('/api/categorias', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                setEditData(null);
-                fetch('/api/categorias').then(r=>r.json()).then(setCats).catch(()=>{});
-              }} className="btn-primary btn-compact"><i className="fa-solid fa-save"></i> Salvar</button>
-            </div>
-          </div>
-          <div className="cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '8px', marginTop: '8px' }}>
-            {cats.map(c => (
-              <div className="card" key={c.id} style={{ padding: '8px' }}>
-                <strong>{c.nome}</strong>
-                <div style={{ color: '#555', marginTop: 6 }}>{c.descricao}</div>
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 10 }}>
-                  <button className="btn-outline" title="Editar" onClick={()=>{ setEditType('categoria' as any); setEditData({ __editCat: c }); setEditOpen(true); }}><i className="fa-solid fa-pen"></i></button>
-                  <button className="btn-outline" title="Excluir" onClick={async ()=>{ await fetch(`/api/categorias/${c.id}`, { method: 'DELETE' }); fetch('/api/categorias').then(r=>r.json()).then(setCats).catch(()=>{}); }}><i className="fa-solid fa-trash"></i></button>
+          {/* Grid view OR Form view */}
+          {!editData?.__showCatForm && !editData?.__editCat && (
+            <div style={{ padding: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <strong>Categorias cadastradas</strong>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="btn-outline" onClick={()=>fetch('/api/categorias').then(r=>r.json()).then(setCats).catch(()=>{})}><i className="fa-solid fa-rotate"></i> Atualizar</button>
+                  <button onClick={()=>setEditData({ ...(editData||{}), __showCatForm: true, __catNome: '', __catDesc: '' })}><i className="fa-solid fa-plus"></i> Novo Cadastro</button>
                 </div>
               </div>
-            ))}
-          </div>
+              <div className="cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '8px', marginTop: '8px' }}>
+                {cats.map(c => (
+                  <div className="card" key={c.id} style={{ padding: '8px' }}>
+                    <strong>{c.nome}</strong>
+                    <div style={{ color: '#555', marginTop: 6 }}>{c.descricao}</div>
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 10 }}>
+                      <button className="btn-outline" title="Editar" onClick={()=>setEditData({ __editCat: c })}><i className="fa-solid fa-pen"></i></button>
+                      <button className="btn-outline" title="Excluir" onClick={async ()=>{ if (!confirm('Deseja excluir esta categoria?')) return; await fetch(`/api/categorias/${c.id}`, { method: 'DELETE' }); fetch('/api/categorias').then(r=>r.json()).then(setCats).catch(()=>{}); }}><i className="fa-solid fa-trash"></i></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {(editData?.__showCatForm || editData?.__editCat) && (
+            <div className="form-compact" style={{ padding: 10 }}>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Nome</label>
+                  <input placeholder="Nome" value={(editData?.__editCat?.nome) ?? (editData?.__catNome||'')} onChange={e=>{
+                    if (editData?.__editCat) setEditData({ ...(editData||{}), __editCat: { ...editData.__editCat, nome: e.target.value } });
+                    else setEditData({ ...(editData||{}), __catNome: e.target.value });
+                  }} />
+                </div>
+                <div className="form-group">
+                  <label>Descrição</label>
+                  <input placeholder="Descrição" value={(editData?.__editCat?.descricao) ?? (editData?.__catDesc||'')} onChange={e=>{
+                    if (editData?.__editCat) setEditData({ ...(editData||{}), __editCat: { ...editData.__editCat, descricao: e.target.value } });
+                    else setEditData({ ...(editData||{}), __catDesc: e.target.value });
+                  }} />
+                </div>
+              </div>
+              <div className="buttons">
+                {editData?.__editCat ? (
+                  <>
+                    <button onClick={async ()=>{
+                      const id = editData.__editCat.id;
+                      // delete + recreate (server has no PUT)
+                      await fetch(`/api/categorias/${id}`, { method: 'DELETE' });
+                      await fetch('/api/categorias', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nome: editData.__editCat.nome, descricao: editData.__editCat.descricao }) });
+                      setEditData(null);
+                      fetch('/api/categorias').then(r=>r.json()).then(setCats).catch(()=>{});
+                    }} className="btn-primary btn-compact"><i className="fa-solid fa-save"></i> Salvar alterações</button>
+                    <button onClick={()=>setEditData(null)} className="btn-outline btn-compact" style={{ marginLeft: 8 }}>Cancelar</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={async ()=>{
+                      const payload = { nome: editData?.__catNome||'', descricao: editData?.__catDesc||'' };
+                      await fetch('/api/categorias', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                      setEditData(null);
+                      fetch('/api/categorias').then(r=>r.json()).then(setCats).catch(()=>{});
+                    }} className="btn-primary btn-compact"><i className="fa-solid fa-save"></i> Salvar</button>
+                    <button onClick={()=>setEditData(null)} className="btn-outline btn-compact" style={{ marginLeft: 8 }}>Cancelar</button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -766,38 +803,73 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
             <h3><i className="fas fa-layer-group"></i> Cadastro de Categoria de Risco</h3>
             <p>Classifique tipos de risco</p>
           </div>
-          <div className="form-compact" style={{ padding: 10 }}>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Nome</label>
-                <input placeholder="Nome" value={(editData?.__catRN)||''} onChange={e=>setEditData({ ...(editData||{}), __catRN: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Descrição</label>
-                <input placeholder="Descrição" value={(editData?.__catRD)||''} onChange={e=>setEditData({ ...(editData||{}), __catRD: e.target.value })} />
-              </div>
-            </div>
-            <div className="buttons">
-              <button onClick={async ()=>{
-                const payload = { nome: editData?.__catRN||'', descricao: editData?.__catRD||'' };
-                await fetch('/api/categorias-risco', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                setEditData(null);
-                fetch('/api/categorias-risco').then(r=>r.json()).then(setRiskCats).catch(()=>{});
-              }} className="btn-primary btn-compact"><i className="fa-solid fa-save"></i> Salvar</button>
-            </div>
-          </div>
-          <div className="cards form-compact" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '8px', marginTop: '8px' }}>
-            {riskCats.map(c => (
-              <div className="card" key={c.id} style={{ padding: '8px' }}>
-                <strong>{c.nome}</strong>
-                <div style={{ color: '#555', marginTop: 6 }}>{c.descricao}</div>
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 10 }}>
-                  <button className="btn-outline" title="Editar" onClick={()=>{ setEditType('categoriaRisco' as any); setEditData({ __editRiskCat: c }); setEditOpen(true); }}><i className="fa-solid fa-pen"></i></button>
-                  <button className="btn-outline" title="Excluir" onClick={async ()=>{ await fetch(`/api/categorias-risco/${c.id}`, { method: 'DELETE' }); fetch('/api/categorias-risco').then(r=>r.json()).then(setRiskCats).catch(()=>{}); }}><i className="fa-solid fa-trash"></i></button>
+          {!editData?.__showRiskCatForm && !editData?.__editRiskCat && (
+            <div style={{ padding: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <strong>Categorias de risco cadastradas</strong>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="btn-outline" onClick={()=>fetch('/api/categorias-risco').then(r=>r.json()).then(setRiskCats).catch(()=>{})}><i className="fa-solid fa-rotate"></i> Atualizar</button>
+                  <button onClick={()=>setEditData({ ...(editData||{}), __showRiskCatForm: true, __catRN: '', __catRD: '' })}><i className="fa-solid fa-plus"></i> Novo Cadastro</button>
                 </div>
               </div>
-            ))}
-          </div>
+              <div className="cards form-compact" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '8px', marginTop: '8px' }}>
+                {riskCats.map(c => (
+                  <div className="card" key={c.id} style={{ padding: '8px' }}>
+                    <strong>{c.nome}</strong>
+                    <div style={{ color: '#555', marginTop: 6 }}>{c.descricao}</div>
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 10 }}>
+                      <button className="btn-outline" title="Editar" onClick={()=>setEditData({ __editRiskCat: c })}><i className="fa-solid fa-pen"></i></button>
+                      <button className="btn-outline" title="Excluir" onClick={async ()=>{ if (!confirm('Deseja excluir esta categoria de risco?')) return; await fetch(`/api/categorias-risco/${c.id}`, { method: 'DELETE' }); fetch('/api/categorias-risco').then(r=>r.json()).then(setRiskCats).catch(()=>{}); }}><i className="fa-solid fa-trash"></i></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {(editData?.__showRiskCatForm || editData?.__editRiskCat) && (
+            <div className="form-compact" style={{ padding: 10 }}>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Nome</label>
+                  <input placeholder="Nome" value={(editData?.__editRiskCat?.nome) ?? (editData?.__catRN||'')} onChange={e=>{
+                    if (editData?.__editRiskCat) setEditData({ ...(editData||{}), __editRiskCat: { ...editData.__editRiskCat, nome: e.target.value } });
+                    else setEditData({ ...(editData||{}), __catRN: e.target.value });
+                  }} />
+                </div>
+                <div className="form-group">
+                  <label>Descrição</label>
+                  <input placeholder="Descrição" value={(editData?.__editRiskCat?.descricao) ?? (editData?.__catRD||'')} onChange={e=>{
+                    if (editData?.__editRiskCat) setEditData({ ...(editData||{}), __editRiskCat: { ...editData.__editRiskCat, descricao: e.target.value } });
+                    else setEditData({ ...(editData||{}), __catRD: e.target.value });
+                  }} />
+                </div>
+              </div>
+              <div className="buttons">
+                {editData?.__editRiskCat ? (
+                  <>
+                    <button onClick={async ()=>{
+                      const id = editData.__editRiskCat.id;
+                      await fetch(`/api/categorias-risco/${id}`, { method: 'DELETE' });
+                      await fetch('/api/categorias-risco', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nome: editData.__editRiskCat.nome, descricao: editData.__editRiskCat.descricao }) });
+                      setEditData(null);
+                      fetch('/api/categorias-risco').then(r=>r.json()).then(setRiskCats).catch(()=>{});
+                    }} className="btn-primary btn-compact"><i className="fa-solid fa-save"></i> Salvar alterações</button>
+                    <button onClick={()=>setEditData(null)} className="btn-outline btn-compact" style={{ marginLeft: 8 }}>Cancelar</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={async ()=>{
+                      const payload = { nome: editData?.__catRN||'', descricao: editData?.__catRD||'' };
+                      await fetch('/api/categorias-risco', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                      setEditData(null);
+                      fetch('/api/categorias-risco').then(r=>r.json()).then(setRiskCats).catch(()=>{});
+                    }} className="btn-primary btn-compact"><i className="fa-solid fa-save"></i> Salvar</button>
+                    <button onClick={()=>setEditData(null)} className="btn-outline btn-compact" style={{ marginLeft: 8 }}>Cancelar</button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
       <Modal open={editOpen} title={editType? `Editar ${editType}` : ''} onClose={()=>{ setEditOpen(false); setEditType(null); setEditData(null); }}
