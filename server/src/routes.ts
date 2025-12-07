@@ -12,7 +12,11 @@ router.delete('/empresas/:id', (req, res) => { store.deleteEmpresa(req.params.id
 
 // Colaboradores
 router.get('/colaboradores', (req, res) => res.json(store.getColaboradores()));
-router.post('/colaboradores', (req, res) => res.json(store.addColaborador(req.body)));
+router.post('/colaboradores', (req, res) => {
+  const id = 'COL' + Date.now().toString(36).toUpperCase();
+  const colaborador = { id, ...req.body };
+  res.json(store.addColaborador(colaborador));
+});
 router.put('/colaboradores/:id', (req, res) => {
   const c = store.updateColaborador(req.params.id, req.body);
   if (!c) return res.sendStatus(404);

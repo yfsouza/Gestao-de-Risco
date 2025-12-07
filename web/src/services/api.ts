@@ -15,6 +15,7 @@ export const api = {
   // Base data
   empresas: () => req('/api/empresas'),
   colaboradores: () => req('/api/colaboradores'),
+  addColaborador: (data: { nome: string; email?: string; setor?: string; telefone?: string }) => req('/api/colaboradores', 'POST', data),
   stakeholders: () => req('/api/stakeholders-grupos'),
   stakeholdersPessoas: () => req('/api/stakeholders'),
   addStakeholderPessoa: (data: any) => req('/api/stakeholders', 'POST', data),
@@ -27,7 +28,19 @@ export const api = {
   updateRisco: (id: string, data: any) => req(`/api/riscos/${id}`, 'PUT', data),
   deleteRisco: (id: string) => req(`/api/riscos/${id}`, 'DELETE'),
   gerarProjeto: (id: string) => req(`/api/riscos/${id}/gerar-projeto`, 'POST'),
-  informarOcorrencia: (id: string, data: { data?: string; impedimento: string; acoes: string; responsavel: string; stakeholdersGruposIds?: string[]; stakeholdersIds?: string[] }) => req(`/api/riscos/${id}/ocorrencias`, 'POST', data),
+  informarOcorrencia: (id: string, data: { 
+    data?: string; 
+    impedimento: string; 
+    acoes: string; 
+    responsavel: string; 
+    stakeholdersGruposIds?: string[]; 
+    stakeholdersIds?: string[];
+    temInvestimento?: boolean;
+    descricaoInvestimento?: string;
+    itens?: { descricao: string; quantidade: number; valorUnitario: number }[];
+    servicos?: { descricao: string; valor: number }[];
+    orcamento?: number;
+  }) => req(`/api/riscos/${id}/ocorrencias`, 'POST', data),
 
   // Projetos
   projetos: () => req('/api/projetos'),

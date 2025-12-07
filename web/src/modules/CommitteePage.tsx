@@ -4,6 +4,7 @@ import { api } from '../services/api';
 import { badgeStyle, statusBadge, probBadge, impactoBadge } from '../utils/badges';
 import { useToast } from '../components/Toast';
 import { Modal } from '../components/Modal';
+import { OcorrenciaPage } from './OcorrenciaPage';
 
 type RiscoRow = {
   id: string;
@@ -59,11 +60,14 @@ export const CommitteePage: React.FC = () => {
   const [stakeholdersGrupos, setStakeholdersGrupos] = useState<{ id: string; nome: string; emails: string[] }[]>([]);
   const [stakeholdersPessoas, setStakeholdersPessoas] = useState<{ id: string; nome: string; setor?: string; email?: string; telefone?: string }[]>([]);
   const toast = useToast();
-  const [showNovaOcorrencia, setShowNovaOcorrencia] = useState<{open: boolean; riscoId?: string}>({open: false});
+  const [showNovaOcorrencia, setShowNovaOcorrencia] = useState<{open: boolean; riscoId?: string; riscoTitulo?: string}>({open: false});
   const [showHistorico, setShowHistorico] = useState<{open: boolean; riscoId?: string; data?: any}>({open: false});
   const [showStatusModal, setShowStatusModal] = useState<{open: boolean; riscoId?: string; currentStatus?: string}>({open: false});
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   
+  // Aba ativa: 'ativos' ou 'encerrados'
+  const [abaAtiva, setAbaAtiva] = useState<'ativos'|'encerrados'>('ativos');
+
   // Filtros
   const [filters, setFilters] = useState<Filters>({
     id: '',
@@ -101,9 +105,16 @@ export const CommitteePage: React.FC = () => {
     return col?.nome || '-';
   };
 
+  // Separar riscos por aba
+  const riscosAtivos = useMemo(() => riscos.filter(r => r.status !== 'Encerrado'), [riscos]);
+  const riscosEncerrados = useMemo(() => riscos.filter(r => r.status === 'Encerrado'), [riscos]);
+
+  // Riscos da aba atual
+  const riscosAbaAtual = abaAtiva === 'ativos' ? riscosAtivos : riscosEncerrados;
+
   // Filtrar riscos
   const filteredRiscos = useMemo(() => {
-    return riscos.filter(r => {
+    return riscosAbaAtual.filter(r => {
       if (filters.id && !r.id.toLowerCase().includes(filters.id.toLowerCase())) return false;
       if (filters.status && r.status !== filters.status) return false;
       if (filters.nivelRisco) {
@@ -124,7 +135,7 @@ export const CommitteePage: React.FC = () => {
       }
       return true;
     });
-  }, [riscos, filters, empresas, colaboradores]);
+  }, [riscosAbaAtual, filters, empresas, colaboradores]);
 
   const clearFilters = () => {
     setFilters({ id: '', status: '', nivelRisco: '', empresa: '', responsavel: '', search: '' });
@@ -144,7 +155,7 @@ export const CommitteePage: React.FC = () => {
     }
   };
 
-  const abrirNovaOcorrencia = (id: string) => setShowNovaOcorrencia({ open: true, riscoId: id });
+  const abrirNovaOcorrencia = (risco: RiscoRow) => setShowNovaOcorrencia({ open: true, riscoId: risco.id, riscoTitulo: risco.titulo });
   const abrirHistorico = async (id: string) => {
     try {
       const detalhe = await api.risco(id);
@@ -165,6 +176,34 @@ export const CommitteePage: React.FC = () => {
       setShowStatusModal({ open: false });
     }
   };
+
+  // Se estiver mostrando a tela de ocorrência, renderiza ela
+  if (showNovaOcorrencia.open) {
+    return (
+      <OcorrenciaPage
+        riscoId={showNovaOcorrencia.riscoId!}
+        riscoTitulo={showNovaOcorrencia.riscoTitulo}
+        colaboradores={stakeholdersPessoas}
+        onVoltar={() => setShowNovaOcorrencia({ open: false })}
+        onSalvar={async (payload) => {
+          await api.informarOcorrencia(showNovaOcorrencia.riscoId!, {
+            data: payload.dataOcorrencia,
+            impedimento: payload.impedimento,
+            acoes: payload.descricao,
+            responsavel: colaboradores.find(c => c.id === payload.responsavelId)?.nome || payload.responsavelId,
+            temInvestimento: payload.temInvestimento,
+            descricaoInvestimento: payload.descricaoInvestimento,
+            itens: payload.itens,
+            servicos: payload.servicos,
+            orcamento: payload.orcamento
+          });
+          toast.show('Ocorrência registrada com sucesso', 'success');
+          setShowNovaOcorrencia({ open: false });
+          load();
+        }}
+      />
+    );
+  }
 
   return (
     <div className="committee-container">
@@ -255,9 +294,27 @@ export const CommitteePage: React.FC = () => {
 
       {/* Grid de Dados */}
       <div className="grid-container">
+        {/* Abas */}
+        <div className="grid-tabs">
+          <button 
+            className={`grid-tab ${abaAtiva === 'ativos' ? 'active' : ''}`}
+            onClick={() => setAbaAtiva('ativos')}
+          >
+            <i className="fa-solid fa-exclamation-triangle"></i> Riscos Ativos
+            <span className="tab-count">{riscosAtivos.length}</span>
+          </button>
+          <button 
+            className={`grid-tab ${abaAtiva === 'encerrados' ? 'active' : ''}`}
+            onClick={() => setAbaAtiva('encerrados')}
+          >
+            <i className="fa-solid fa-check-circle"></i> Encerrados
+            <span className="tab-count">{riscosEncerrados.length}</span>
+          </button>
+        </div>
+
         <div className="grid-header">
           <div className="grid-title">
-            <i className="fa-solid fa-list"></i> Riscos Registrados
+            <i className="fa-solid fa-list"></i> {abaAtiva === 'ativos' ? 'Riscos Ativos' : 'Riscos Encerrados'}
           </div>
           <div className="grid-actions">
             <input 
@@ -320,7 +377,7 @@ export const CommitteePage: React.FC = () => {
                   </td>
                   <td>
                     <div className="action-icons">
-                      <button className="icon-btn btn-comment" title="Informar Ocorrência" onClick={() => abrirNovaOcorrencia(r.id)}>
+                      <button className="icon-btn btn-comment" title="Informar Ocorrência" onClick={() => abrirNovaOcorrencia(r)}>
                         <i className="fa-solid fa-bullhorn"></i>
                       </button>
                       <button className="icon-btn btn-view" title="Histórico de Ocorrência" onClick={() => abrirHistorico(r.id)}>
@@ -336,7 +393,7 @@ export const CommitteePage: React.FC = () => {
 
         <div className="pagination">
           <div className="pagination-info">
-            Mostrando {filteredRiscos.length} de {riscos.length} registros
+            Mostrando {filteredRiscos.length} de {riscosAbaAtual.length} registros {abaAtiva === 'ativos' ? '(Ativos)' : '(Encerrados)'}
           </div>
         </div>
       </div>
@@ -395,24 +452,6 @@ export const CommitteePage: React.FC = () => {
           </div>
         </div>
       </Modal>
-      {/* Modal: Nova Ocorrência */}
-      <Modal open={showNovaOcorrencia.open} onClose={()=>setShowNovaOcorrencia({ open: false })} title="Informar Ocorrência">
-        {showNovaOcorrencia.open && (
-          <NovaOcorrenciaForm
-            grupos={stakeholdersGrupos}
-            pessoas={stakeholdersPessoas}
-            onSubmit={async (payload) => {
-              try {
-                await api.informarOcorrencia(showNovaOcorrencia.riscoId!, payload);
-                toast.show('Ocorrência registrada', 'success');
-                setShowNovaOcorrencia({ open: false });
-              } catch {
-                toast.show('Erro ao registrar ocorrência', 'error');
-              }
-            }}
-          />
-        )}
-      </Modal>
 
       {/* Modal: Histórico */}
       <Modal open={showHistorico.open} onClose={()=>setShowHistorico({ open: false })} title="Histórico de Ocorrências">
@@ -423,62 +462,6 @@ export const CommitteePage: React.FC = () => {
         )}
       </Modal>
     </div>
-  );
-};
-
-const NovaOcorrenciaForm: React.FC<{ grupos: { id: string; nome: string; emails: string[] }[]; pessoas: { id: string; nome: string; setor?: string; email?: string; telefone?: string }[]; onSubmit: (data: { data?: string; impedimento: string; acoes: string; responsavel: string; stakeholdersGruposIds?: string[]; stakeholdersIds?: string[] }) => void }>
- = ({ grupos, pessoas, onSubmit }) => {
-  const defaultDate = new Date().toISOString().slice(0,16);
-  const [data, setData] = useState<string>(defaultDate);
-  const [impedimento, setImpedimento] = useState('');
-  const [acoes, setAcoes] = useState('');
-  const [responsavel, setResponsavel] = useState('');
-  const [selecionados, setSelecionados] = useState<string[]>([]);
-  const [selecionadosPessoas, setSelecionadosPessoas] = useState<string[]>([]);
-  return (
-    <form onSubmit={e=>{ e.preventDefault(); onSubmit({ data, impedimento, acoes, responsavel, stakeholdersGruposIds: selecionados, stakeholdersIds: selecionadosPessoas }); }} className="form-grid">
-      <label>Data da ocorrência
-        <input type="datetime-local" value={data} onChange={e=>setData(e.target.value)} />
-      </label>
-      <label>Impedimento
-        <textarea rows={3} value={impedimento} onChange={e=>setImpedimento(e.target.value)}></textarea>
-      </label>
-      <label>Ações
-        <textarea rows={3} value={acoes} onChange={e=>setAcoes(e.target.value)}></textarea>
-      </label>
-      <label>Responsável
-        <input type="text" value={responsavel} onChange={e=>setResponsavel(e.target.value)} />
-      </label>
-      <div>
-        <strong>Stakeholders (grupos)</strong>
-        <div style={{ display: 'grid', gap: '0.25rem' }}>
-          {grupos.map(g=> (
-            <label key={g.id} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <input type="checkbox" checked={selecionados.includes(g.id)} onChange={e=>{
-                setSelecionados(s=> e.target.checked ? [...s, g.id] : s.filter(x=>x!==g.id));
-              }} />
-              <span>{g.nome} — {g.emails.join(', ')}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-      <div>
-        <strong>Stakeholders (pessoas)</strong>
-        <div style={{ display: 'grid', gap: '0.25rem' }}>
-          {pessoas.map(p=> (
-            <label key={p.id} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <input type="checkbox" checked={selecionadosPessoas.includes(p.id)} onChange={e=>{
-                setSelecionadosPessoas(s=> e.target.checked ? [...s, p.id] : s.filter(x=>x!==p.id));
-              }} />
-              <span>{p.nome}{p.setor? ' — '+p.setor: ''} {p.email? ' — '+p.email: ''} {p.telefone? ' — '+p.telefone: ''}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-      <div className="form-actions">
-        <button className="btn" type="submit"><i className="fa-solid fa-floppy-disk"></i> Salvar</button>
-      </div>
-    </form>
   );
 };
 

@@ -86,6 +86,16 @@
       "email": "suporte@pantaiera.inde.br",
       "empresaId": "EMP1765132611037",
       "departamento": "ti"
+    },
+    {
+      "nome": "vdv",
+      "email": "suporte@pantaiera.inde.br"
+    },
+    {
+      "id": "COLMIWDESS4",
+      "nome": "l,l,",
+      "email": "suporte@pantaiera.inde.br",
+      "setor": "cc"
     }
   ],
   "stakeholdersGrupos": [
@@ -113,7 +123,7 @@
       "analistaId": "COL001",
       "probabilidade": "Alta",
       "impacto": "5-Alto",
-      "status": "Aberto",
+      "status": "Encerrado",
       "matriz": "Alto",
       "historico": [
         {
@@ -185,6 +195,21 @@
           "data": "2025-12-07T22:42",
           "evento": "Ocorrência: impedimento=\"financeiro\" | ações=\"precisa compra switci\" | responsável=\"teste\"",
           "autor": "teste"
+        },
+        {
+          "data": "2025-12-07T23:40",
+          "evento": "Ocorrência: impedimento=\"kkk\" | ações=\"k kl,l,\" | responsável=\"vdv\"",
+          "autor": "vdv"
+        },
+        {
+          "data": "2025-12-07T19:45",
+          "evento": "Ocorrência: impedimento=\"ddd\" | ações=\"dddd\" | responsável=\"COLMIWDESS4\"",
+          "autor": "COLMIWDESS4"
+        },
+        {
+          "data": "2025-12-07T23:49:32.160Z",
+          "evento": "Status: Aberto → Encerrado",
+          "autor": "Sistema"
         }
       ],
       "responsavelId": "COL001"
