@@ -151,3 +151,403 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--s
   nav.app-nav ul { gap: 0.5rem; }
   nav.app-nav a, nav.app-nav button { padding: 0.4rem 0.6rem; }
 }
+
+/* ============================
+   Committee Page Styles
+   ============================ */
+
+.committee-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Page Header */
+.page-header {
+  background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+  color: white;
+  padding: 25px 30px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-header h2 {
+  font-size: 18px;
+  font-weight: 400;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Filters Container */
+.filters-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 180px;
+}
+
+.filter-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 14px;
+}
+
+.filter-select, .filter-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border-color 0.3s;
+}
+
+.filter-select:focus, .filter-input:focus {
+  outline: none;
+  border-color: #3f51b5;
+  box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background-color: #3f51b5;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #303f9f;
+}
+
+.btn-secondary {
+  background-color: #f5f5f5;
+  color: #555;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+/* Grid Container */
+.grid-container {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.grid-header {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grid-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.grid-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.search-box {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 250px;
+  font-size: 14px;
+}
+
+/* Data Grid Table */
+.data-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-grid thead {
+  background-color: #f1f5fd;
+}
+
+.data-grid th {
+  padding: 15px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #e0e6ef;
+  white-space: nowrap;
+  position: relative;
+  cursor: pointer;
+}
+
+.data-grid th:hover {
+  background-color: #e8edff;
+}
+
+.data-grid tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.data-grid tbody tr:hover {
+  background-color: #f9fafc;
+}
+
+.data-grid td {
+  padding: 14px 12px;
+  vertical-align: middle;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 100px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.status-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.status-aberto {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #64b5f6;
+}
+
+.status-em-andamento {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #42a5f5;
+}
+
+.status-mitigando {
+  background-color: #fff3e0;
+  color: #f57c00;
+  border: 1px solid #ffb74d;
+}
+
+.status-encerrado {
+  background-color: #e8f5e9;
+  color: #388e3c;
+  border: 1px solid #81c784;
+}
+
+/* Risk Badges */
+.risk-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 70px;
+}
+
+/* Status Cell */
+.status-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.btn-change-status {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.btn-change-status:hover {
+  background-color: #e0e0e0;
+}
+
+/* Action Icons */
+.action-icons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 16px;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.icon-btn:hover {
+  background-color: #f0f2ff;
+}
+
+.btn-comment:hover {
+  color: #2196f3;
+}
+
+.btn-edit:hover {
+  color: #ff9800;
+}
+
+.btn-view:hover {
+  color: #4caf50;
+}
+
+/* Status Options Modal */
+.status-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.status-option {
+  padding: 15px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.status-option:hover {
+  border-color: #3f51b5;
+  background-color: #f8f9ff;
+}
+
+.status-option.selected {
+  border-color: #3f51b5;
+  background-color: #f0f2ff;
+}
+
+/* Pagination */
+.pagination {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #eaeaea;
+}
+
+.pagination-info {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Responsive Committee */
+@media (max-width: 1200px) {
+  .committee-container {
+    padding: 15px;
+  }
+  
+  .data-grid {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 992px) {
+  .status-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+  }
+  
+  .filter-group {
+    min-width: 100%;
+  }
+  
+  .search-box {
+    width: 100%;
+  }
+  
+  .grid-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .action-icons {
+    flex-direction: column;
+  }
+  
+  .page-header h1 {
+    font-size: 22px;
+  }
+  
+  .page-header h2 {
+    font-size: 14px;
+  }
+}

@@ -15,6 +15,10 @@
     {
       "id": "EMP1765071004683",
       "nome": ""
+    },
+    {
+      "id": "EMP1765132611037",
+      "nome": "frigosul"
     }
   ],
   "colaboradores": [
@@ -75,6 +79,13 @@
       "email": "ddddddddddddd@gggggggggggggggg",
       "empresaId": "EMP001",
       "departamento": "ti"
+    },
+    {
+      "id": "COL1765132575720",
+      "nome": "yago",
+      "email": "suporte@pantaiera.inde.br",
+      "empresaId": "EMP1765132611037",
+      "departamento": "ti"
     }
   ],
   "stakeholdersGrupos": [
@@ -101,9 +112,9 @@
       "descricao": "Risco de ausência prolongada afetando operação crítica.",
       "analistaId": "COL001",
       "probabilidade": "Alta",
-      "impacto": "Médio",
-      "status": "Mitigando",
-      "matriz": "RH",
+      "impacto": "5-Alto",
+      "status": "Aberto",
+      "matriz": "Alto",
       "historico": [
         {
           "data": "2025-12-06T04:24:02.449Z",
@@ -129,8 +140,54 @@
           "data": "2025-12-07T04:44:05.123Z",
           "evento": "Projeto PRJ-1765082645123 gerado",
           "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T18:35:05.250Z",
+          "evento": "Impacto: Médio → 5-Alto | Matriz: RH → Alto",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T21:03:19.022Z",
+          "evento": "Status: Mitigando → Aberto",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T21:03:23.216Z",
+          "evento": "Status: Aberto → Mitigando",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T21:03:27.792Z",
+          "evento": "Status: Mitigando → Encerrado",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T21:03:42.678Z",
+          "evento": "Status: Encerrado → Mitigando",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T22:38:14.600Z",
+          "evento": "Status: Mitigando → Aberto",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T22:40:52.544Z",
+          "evento": "Status: Aberto → Mitigando",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T22:41:07.417Z",
+          "evento": "Status: Mitigando → Aberto",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-07T22:42",
+          "evento": "Ocorrência: impedimento=\"financeiro\" | ações=\"precisa compra switci\" | responsável=\"teste\"",
+          "autor": "teste"
         }
-      ]
+      ],
+      "responsavelId": "COL001"
     },
     {
       "id": "RSK004",

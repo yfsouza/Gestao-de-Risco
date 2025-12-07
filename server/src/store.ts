@@ -282,12 +282,40 @@ export class DataStore {
       const prev = db.riscos[i];
       const next = { ...prev, ...r } as Risco;
       const changes: string[] = [];
+      
+      // Detectar todas as alterações e registrar no histórico
       if (r.status && r.status !== prev.status) changes.push(`Status: ${prev.status} → ${r.status}`);
       if (r.probabilidade && r.probabilidade !== prev.probabilidade) changes.push(`Probabilidade: ${prev.probabilidade} → ${r.probabilidade}`);
       if (r.impacto && r.impacto !== prev.impacto) changes.push(`Impacto: ${prev.impacto} → ${r.impacto}`);
-      if (r.matriz && r.matriz !== prev.matriz) changes.push(`Matriz: ${prev.matriz} → ${r.matriz}`);
-      if (r.titulo && r.titulo !== prev.titulo) changes.push(`Título alterado`);
+      if (r.matriz && r.matriz !== prev.matriz) changes.push(`Nível de Risco: ${prev.matriz} → ${r.matriz}`);
+      if (r.titulo && r.titulo !== prev.titulo) changes.push(`Título: "${prev.titulo}" → "${r.titulo}"`);
       if (r.descricao && r.descricao !== prev.descricao) changes.push(`Descrição alterada`);
+      if ((r as any).empresaId && (r as any).empresaId !== (prev as any).empresaId) {
+        const empAnterior = this.getEmpresas().find(e => e.id === (prev as any).empresaId)?.nome || (prev as any).empresaId || 'Nenhuma';
+        const empNova = this.getEmpresas().find(e => e.id === (r as any).empresaId)?.nome || (r as any).empresaId;
+        changes.push(`Empresa: ${empAnterior} → ${empNova}`);
+      }
+      if ((r as any).responsavelId && (r as any).responsavelId !== (prev as any).responsavelId) {
+        const respAnterior = this.getColaboradores().find(c => c.id === (prev as any).responsavelId)?.nome || (prev as any).responsavelId || 'Nenhum';
+        const respNovo = this.getColaboradores().find(c => c.id === (r as any).responsavelId)?.nome || (r as any).responsavelId;
+        changes.push(`Responsável: ${respAnterior} → ${respNovo}`);
+      }
+      if ((r as any).analistaId && (r as any).analistaId !== (prev as any).analistaId) {
+        const analAnterior = this.getColaboradores().find(c => c.id === (prev as any).analistaId)?.nome || (prev as any).analistaId || 'Nenhum';
+        const analNovo = this.getColaboradores().find(c => c.id === (r as any).analistaId)?.nome || (r as any).analistaId;
+        changes.push(`Analista: ${analAnterior} → ${analNovo}`);
+      }
+      if ((r as any).categoriaId && (r as any).categoriaId !== (prev as any).categoriaId) {
+        const catAnterior = this.getCategorias().find(c => c.id === (prev as any).categoriaId)?.nome || 'Nenhuma';
+        const catNova = this.getCategorias().find(c => c.id === (r as any).categoriaId)?.nome || (r as any).categoriaId;
+        changes.push(`Categoria: ${catAnterior} → ${catNova}`);
+      }
+      if ((r as any).categoriaRiscoId && (r as any).categoriaRiscoId !== (prev as any).categoriaRiscoId) {
+        const catRiscoAnterior = this.getCategoriasRisco().find(c => c.id === (prev as any).categoriaRiscoId)?.nome || 'Nenhuma';
+        const catRiscoNova = this.getCategoriasRisco().find(c => c.id === (r as any).categoriaRiscoId)?.nome || (r as any).categoriaRiscoId;
+        changes.push(`Categoria de Risco: ${catRiscoAnterior} → ${catRiscoNova}`);
+      }
+      
       if (changes.length) {
         next.historico = [...(prev.historico||[]), { data: new Date().toISOString(), evento: changes.join(' | '), autor: 'Sistema' }];
       }

@@ -1,6 +1,7 @@
-export const statusBadge = (status: 'Aberto'|'Mitigando'|'Encerrado') => {
+export const statusBadge = (status: 'Aberto'|'Em Andamento'|'Mitigando'|'Encerrado') => {
   const map = {
     Aberto: { bg: '#e8f4fc', fg: '#3498db' },
+    'Em Andamento': { bg: '#e3f2fd', fg: '#1976d2' },
     Mitigando: { bg: '#fef5e7', fg: '#f39c12' },
     Encerrado: { bg: '#d5f4e6', fg: '#27ae60' },
   } as const;
