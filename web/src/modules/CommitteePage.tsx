@@ -276,6 +276,7 @@ export const CommitteePage: React.FC = () => {
               <tr>
                 <th>ID</th>
                 <th>Título</th>
+                <th>Descrição</th>
                 <th>Empresa</th>
                 <th>Responsável</th>
                 <th>Nível de Risco</th>
@@ -284,10 +285,11 @@ export const CommitteePage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredRiscos.map(r => (
+              {filteredRiscos.map((r, index) => (
                 <tr key={r.id}>
-                  <td><strong>{r.id}</strong></td>
+                  <td style={{ fontFamily: 'monospace', textAlign: 'center' }} title={r.id}><strong>{String(index + 1).padStart(3, '0')}</strong></td>
                   <td>{r.titulo}</td>
+                  <td>{r.descricao || '-'}</td>
                   <td>{getEmpresaNome(r.empresaId)}</td>
                   <td>{getResponsavelNome(r.responsavelId, r.analistaId)}</td>
                   <td>
@@ -323,9 +325,6 @@ export const CommitteePage: React.FC = () => {
                       </button>
                       <button className="icon-btn btn-view" title="Histórico de Ocorrência" onClick={() => abrirHistorico(r.id)}>
                         <i className="fa-solid fa-clock-rotate-left"></i>
-                      </button>
-                      <button className="icon-btn btn-edit" title="Converter em Projeto" onClick={() => gerarProjeto(r.id)}>
-                        <i className="fa-solid fa-diagram-project"></i>
                       </button>
                     </div>
                   </td>

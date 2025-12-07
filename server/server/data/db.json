@@ -224,6 +224,27 @@
           "autor": "Sistema"
         }
       ]
+    },
+    {
+      "probabilidade": "3-Média",
+      "impacto": "3-Médio",
+      "status": "Aberto",
+      "empresaId": "EMP1765132611037",
+      "responsavelId": "COL013",
+      "titulo": "sem internet",
+      "categoriaId": "CAT-1765114247308",
+      "categoriaRiscoId": "CAT013",
+      "descricao": "nao tem como isntalar",
+      "matriz": "Médio",
+      "createdAt": "2025-12-07T23:23:50.208Z",
+      "id": "bcd14687-3512-4ae6-b8e5-dc1a09f39e17",
+      "historico": [
+        {
+          "data": "2025-12-07T23:23:50.248Z",
+          "evento": "Risco criado",
+          "autor": "Sistema"
+        }
+      ]
     }
   ],
   "projetos": [

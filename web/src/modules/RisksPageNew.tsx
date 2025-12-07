@@ -242,42 +242,53 @@ export const RisksPage: React.FC<{ base: AppState; setScreen?: React.Dispatch<Re
           </div>
 
           <div style={{ marginTop: 12 }} className="table-responsive">
-            <table className="app-table">
+            <table className="app-table" style={{ fontSize: 12, tableLayout: 'fixed', width: '100%' }}>
+                <colgroup>
+                  <col style={{ width: '8%' }} />
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '22%' }} />
+                  <col style={{ width: '12%' }} />
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '8%' }} />
+                  <col style={{ width: '8%' }} />
+                  <col style={{ width: '12%' }} />
+                </colgroup>
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Data Cadastro</th>
-                    <th>Título</th>
+                    <th>Data</th>
+                    <th>Evento de Risco</th>
                     <th>Empresa</th>
-                    <th>Probabilidade</th>
-                    <th>Impacto</th>
-                    <th>Nível de Risco</th>
+                    <th>Prob.</th>
+                    <th>Imp.</th>
+                    <th>Nível</th>
                     <th>Status</th>
                     <th>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map(r => (
+                  {filtered.map((r, index) => (
                     <tr key={r.id}>
-                      <td style={{ fontFamily: 'monospace', fontSize: 12, maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={r.id}>
-                        {r.id ? (r.id.length > 10 ? r.id.slice(0, 10) + '…' : r.id) : ''}
+                      <td style={{ fontFamily: 'monospace', fontSize: 11, textAlign: 'center' }} title={r.id}>
+                        {String(index + 1).padStart(3, '0')}
                       </td>
-                      <td>{formatDateOnly(r.createdAt || (r as any).dataCadastro || (r as any).dataCriacao || (r.historico && r.historico[0]?.data) || '')}</td>
-                      <td>{r.titulo}</td>
-                      <td>{base.empresas.find(e=>e.id===r.empresaId)?.nome || ''}</td>
-                      <td><span style={{ padding: '4px 8px', background: probImpactBadge(r.probabilidade as any).bg, color: probImpactBadge(r.probabilidade as any).fg, borderRadius: 4 }}>{r.probabilidade}</span></td>
-                      <td><span style={{ padding: '4px 8px', background: probImpactBadge(r.impacto as any).bg, color: probImpactBadge(r.impacto as any).fg, borderRadius: 4 }}>{r.impacto}</span></td>
-                      <td><span style={{ padding: '4px 8px', background: nivelBadge(nivelFrom(r.probabilidade as any, r.impacto as any)).bg, color: nivelBadge(nivelFrom(r.probabilidade as any, r.impacto as any)).fg, borderRadius: 4 }}>{nivelFrom(r.probabilidade as any, r.impacto as any)}</span></td>
-                      <td>{r.status}</td>
-                      <td>
+                      <td style={{ whiteSpace: 'nowrap', fontSize: 10 }}>{formatDateOnly(r.createdAt || (r as any).dataCadastro || (r as any).dataCriacao || (r.historico && r.historico[0]?.data) || '')}</td>
+                      <td style={{ overflow: 'hidden' }} title={`${r.titulo}\n${r.descricao || ''}`}>
+                        <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.titulo}</div>
+                        <div style={{ fontSize: 10, color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.descricao || ''}</div>
+                      </td>
+                      <td style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={base.empresas.find(e=>e.id===r.empresaId)?.nome || ''}>{base.empresas.find(e=>e.id===r.empresaId)?.nome || ''}</td>
+                      <td><span style={{ padding: '2px 4px', fontSize: 10, background: probImpactBadge(r.probabilidade as any).bg, color: probImpactBadge(r.probabilidade as any).fg, borderRadius: 4 }}>{r.probabilidade}</span></td>
+                      <td><span style={{ padding: '2px 4px', fontSize: 10, background: probImpactBadge(r.impacto as any).bg, color: probImpactBadge(r.impacto as any).fg, borderRadius: 4 }}>{r.impacto}</span></td>
+                      <td><span style={{ padding: '2px 4px', fontSize: 10, background: nivelBadge(nivelFrom(r.probabilidade as any, r.impacto as any)).bg, color: nivelBadge(nivelFrom(r.probabilidade as any, r.impacto as any)).fg, borderRadius: 4 }}>{nivelFrom(r.probabilidade as any, r.impacto as any)}</span></td>
+                      <td style={{ fontSize: 10 }}>{r.status}</td>
+                      <td style={{ whiteSpace: 'nowrap' }}>
                         <button className="btn-small btn-icon btn-icon--edit" title="Editar" aria-label={`Editar ${r.titulo}`} onClick={()=>{ if (setScreen) { setSelectedRiskId && setSelectedRiskId(r.id); setScreen('risks-form'); } else { setEditingId(r.id); setForm(r as any); } }}>
                           <i className="fa-solid fa-pen"></i>
                         </button>
-                        <button className="btn-small btn-icon btn-icon--delete" title="Excluir" aria-label={`Excluir ${r.titulo}`} onClick={()=>handleDelete(r.id)} style={{ marginLeft: 8 }}>
+                        <button className="btn-small btn-icon btn-icon--delete" title="Excluir" aria-label={`Excluir ${r.titulo}`} onClick={()=>handleDelete(r.id)} style={{ marginLeft: 4 }}>
                           <i className="fa-solid fa-trash"></i>
-                        </button>
-                        <button className="btn-small btn-icon btn-icon--history" title="Histórico" aria-label={`Histórico ${r.titulo}`} onClick={()=>openHistory(r)} style={{ marginLeft: 8 }}>
-                          <i className="fa-solid fa-clock-rotate-left"></i>
                         </button>
                       </td>
                     </tr>
