@@ -6,7 +6,7 @@ import { useToast } from '../components/Toast';
 
 export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void }> = ({ base, setBase }) => {
   const toast = useToast();
-  const [screen, setScreen] = useState<'empresas'|'colaboradores'|'grupos'|'stakeholders'>('empresas');
+  const [screen, setScreen] = useState<'empresas'|'colaboradores'|'grupos'|'stakeholders'>('stakeholders');
   const [emp, setEmp] = useState('');
   const [col, setCol] = useState({ nome: '', email: '', empresaId: '' });
   const [grp, setGrp] = useState({ nome: '', descricao: '' });
@@ -99,7 +99,12 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
     }
   };
 
-  const empresasView = useMemo(() => base.empresas.filter(e => e.nome.toLowerCase().includes(filter.toLowerCase())), [base.empresas, filter]);
+  const empresasView = useMemo(() => {
+    const term = filter.toLowerCase();
+    const filtered = base.empresas.filter(e => (e.nome||'').toLowerCase().includes(term));
+    const sorted = [...filtered].sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+    return sortEmpAsc ? sorted : sorted.reverse();
+  }, [base.empresas, filter, sortEmpAsc]);
   const colaboradoresView = useMemo(() => base.colaboradores.filter(c => (c.nome+' '+c.email).toLowerCase().includes(filter.toLowerCase())), [base.colaboradores, filter]);
   const gruposView = useMemo(() => base.stakeholdersGrupos.filter((g:any) => (g.nome+' '+(g.descricao||'')).toLowerCase().includes(filter.toLowerCase())), [base.stakeholdersGrupos, filter]);
   const stakeholdersView = useMemo(() => stkList.filter(s => (s.nome+' '+(s.setor||'')+' '+(s.email||'')+' '+(s.telefone||'')).toLowerCase().includes(filter.toLowerCase())), [stkList, filter]);
@@ -135,10 +140,10 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
         <nav style={{ display:'flex', alignItems:'center', gap: 0, borderBottom: '1px solid #e0e0e0', background: '#fafafa' }}>
           {[
             { key: 'stakeholders', icon: 'fa-user', label: 'Pessoa' },
-            { key: 'grupos', icon: 'fa-users', label: 'Grupos' },
-            { key: 'empresas', icon: 'fa-building', label: 'Empresas' },
-            { key: 'categorias', icon: 'fa-tags', label: 'Categorias' },
-            { key: 'categoriasRisco', icon: 'fa-layer-group', label: 'Cat. Risco' },
+            { key: 'grupos', icon: 'fa-users', label: 'Grupo' },
+            { key: 'empresas', icon: 'fa-building', label: 'Empresa' },
+            { key: 'categorias', icon: 'fa-tags', label: 'Categoria' },
+            { key: 'categoriasRisco', icon: 'fa-layer-group', label: 'Categoria do Risco' },
           ].map(item => (
             <button
               key={item.key}
@@ -189,11 +194,7 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
                 <thead>
                   <tr>
                     <th
-                      onClick={()=>{
-                        const sorted = [...empresasView].sort((a,b)=> (a.nome||'').localeCompare(b.nome||''));
-                        setEmpresasView(sortEmpAsc ? sorted : sorted.reverse());
-                        setSortEmpAsc(!sortEmpAsc);
-                      }}
+                      onClick={()=>{ setSortEmpAsc(!sortEmpAsc); }}
                       style={{ cursor:'pointer', userSelect: 'none' }}
                     >
                       <i className={`fa-solid ${sortEmpAsc ? 'fa-arrow-up-a-z' : 'fa-arrow-down-a-z'}`} style={{ marginRight: 6 }}></i> Nome
