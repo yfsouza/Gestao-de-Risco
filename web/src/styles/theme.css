@@ -41,11 +41,43 @@ nav.app-nav a:hover, nav.app-nav button:hover, nav.app-nav .active { background-
 label { font-weight: 600; color: var(--primary); }
 .required::after { content: ' *'; color: var(--danger); }
 
-table.app-table { width: 100%; border-collapse: collapse; }
-table.app-table th, table.app-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
+table.app-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+table.app-table th, table.app-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 table.app-table th { background: #f8f9fa; font-weight: 700; color: var(--primary); cursor: pointer; user-select: none; }
 table.app-table th:hover { background: #e9ecef; }
 table.app-table tr:hover { background: #f8f9fa; }
+
+/* Column width hints so table fits the card width */
+table.app-table th:nth-child(1), table.app-table td:nth-child(1) { width: 90px; }
+table.app-table th:nth-child(2), table.app-table td:nth-child(2) { width: 140px; }
+table.app-table th:nth-child(3), table.app-table td:nth-child(3) { width: 35%; }
+/* Allow the title column to show full text and wrap instead of truncating */
+table.app-table th:nth-child(3), table.app-table td:nth-child(3) {
+  white-space: normal;
+  overflow: visible;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+table.app-table th:nth-child(4), table.app-table td:nth-child(4) { width: 220px; }
+table.app-table th:nth-child(5), table.app-table td:nth-child(5) { width: 110px; }
+table.app-table th:nth-child(6), table.app-table td:nth-child(6) { width: 110px; }
+table.app-table th:nth-child(7), table.app-table td:nth-child(7) { width: 110px; }
+table.app-table th:nth-child(8), table.app-table td:nth-child(8) { width: 120px; }
+
+/* Ensure actions column keeps icons visible */
+table.app-table th:nth-child(9), table.app-table td:nth-child(9) { width: 160px; text-align: right; }
+table.app-table td:nth-child(9) { overflow: visible; white-space: nowrap; }
+
+/* Allow date and company columns to wrap so full values are visible */
+table.app-table th:nth-child(2), table.app-table td:nth-child(2),
+table.app-table th:nth-child(4), table.app-table td:nth-child(4) {
+  white-space: normal;
+  overflow: visible;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.table-responsive { overflow-x: auto; margin-bottom: 1.5rem; }
 
 .badge { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-align: center; }
 
@@ -85,6 +117,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--s
 .form-compact textarea { height: auto; }
 .form-compact .form-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:6px; }
 .form-compact .form-group { flex:1; min-width:220px; }
+.compact-row { display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; }
+.compact-row .form-group { flex: 1; min-width: 120px; padding: 0.4rem; }
+.compact-row .form-group label { font-size: 12px; margin-bottom: 4px; }
+.compact-row .badge { margin-top: 6px; }
 .form-compact .buttons { display:flex; justify-content:flex-end; gap:6px; margin-top:6px; padding-top:6px; border-top:1px solid #eee; }
 .form-compact .btn-compact { padding:5px 8px; font-size:12px; border-radius:6px; }
 /* Variants */
@@ -93,6 +129,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--s
 .btn-success { background: var(--success); color: #fff; }
 .btn-warning { background: var(--warning); color: #fff; }
 .btn-small { padding: 0.35rem 0.6rem; font-size: 0.85rem; }
+
+/* Icon buttons for table actions */
+.btn-icon { background: transparent; border: 1px solid transparent; padding: 0.25rem 0.45rem; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.btn-icon i { display: inline-block; font-size: 0.95rem; }
+.btn-icon--edit { color: var(--secondary); background: rgba(52,152,219,0.06); }
+.btn-icon--delete { color: var(--danger); background: rgba(231,76,60,0.06); }
+.btn-icon--history { color: var(--gray); background: rgba(149,165,166,0.05); }
+.btn-icon:hover { transform: translateY(-1px); }
 
 /* Print tweaks */
 @media print {

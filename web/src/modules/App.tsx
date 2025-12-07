@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RisksPage } from './RisksPage';
+import { RisksPage } from './RisksPageNew';
 import { ProjectsPage } from './ProjectsPage';
 import { CommitteePage } from './CommitteePage';
 import { ReportsPage } from './ReportsPage';
@@ -24,6 +24,7 @@ export type Risco = {
   probabilidade: 'Baixa'|'Média'|'Alta';
   impacto: 'Baixo'|'Médio'|'Alto';
   status: 'Aberto'|'Mitigando'|'Encerrado';
+  createdAt?: string;
   matriz: string;
   historico: { data: string; evento: string; autor: string }[];
 };
@@ -45,8 +46,9 @@ export type AppState = {
 };
 
 export const App: React.FC = () => {
-  const [screen, setScreen] = useState<'risks'|'projects'|'committee'|'reports'|'admin'>('risks');
+  const [screen, setScreen] = useState<'risks'|'risks-form'|'projects'|'committee'|'reports'|'admin'>('risks');
   const [base, setBase] = useState<AppState>({ empresas: [], colaboradores: [], stakeholdersGrupos: [] });
+  const [selectedRiskId, setSelectedRiskId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -81,7 +83,8 @@ export const App: React.FC = () => {
         </div>
       </header>
       <main className="container" style={{ paddingTop: '1.5rem', paddingBottom: '2rem' }}>
-        {screen === 'risks' && <RisksPage base={base} />}
+        {screen === 'risks' && <RisksPage base={base} setScreen={setScreen} showForm={false} setSelectedRiskId={setSelectedRiskId} selectedRiskId={selectedRiskId} />}
+        {screen === 'risks-form' && <RisksPage base={base} setScreen={setScreen} showForm={true} selectedRiskId={selectedRiskId} setSelectedRiskId={setSelectedRiskId} />}
         {screen === 'projects' && <ProjectsPage base={base} />}
         {screen === 'committee' && <CommitteePage />}
         {screen === 'reports' && <ReportsPage />}
