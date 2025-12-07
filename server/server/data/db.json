@@ -7,6 +7,14 @@
     {
       "id": "EMP002",
       "nome": "Filial Sinop"
+    },
+    {
+      "id": "EMP1765071004251",
+      "nome": "aa"
+    },
+    {
+      "id": "EMP1765071004683",
+      "nome": ""
     }
   ],
   "colaboradores": [
@@ -17,10 +25,10 @@
       "empresaId": "EMP001"
     },
     {
-      "id": "COL002",
-      "nome": "Ana",
-      "email": "ana@empresa.com",
-      "empresaId": "EMP002"
+      "id": "COL1765072079827",
+      "nome": "k",
+      "email": "k",
+      "empresaId": ""
     }
   ],
   "stakeholdersGrupos": [
@@ -30,7 +38,13 @@
       "emails": [
         "gestor@empresa.com",
         "comite@empresa.com"
-      ]
+      ],
+      "fechado": false,
+      "participantesColabIds": [
+        "COL1765072079827",
+        "COL001"
+      ],
+      "participantesStakeIds": []
     }
   ],
   "riscos": [
@@ -53,6 +67,16 @@
         {
           "data": "2025-12-06T04:24:02.449Z",
           "evento": "Plano de mitigação iniciado",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T17:39:48.683Z",
+          "evento": "Projeto PRJ-1765042788683 gerado",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T17:44:28.811Z",
+          "evento": "Projeto PRJ-1765043068811 gerado",
           "autor": "Sistema"
         }
       ]
@@ -111,6 +135,83 @@
         {
           "data": "2025-12-06T04:27:15.703Z",
           "evento": "Projeto PRJ-1764995235703 gerado",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "probabilidade": "1-Muito baixa",
+      "impacto": "5-Muito Alto",
+      "status": "Aberto",
+      "empresaId": "EMP001",
+      "responsavelId": "COL001",
+      "titulo": "tchchfufufufuug",
+      "descricao": "fugifififigkgkgkg\n",
+      "matriz": "Médio",
+      "id": "850b4869-2ec2-43d4-95bd-7fcc1839640f",
+      "historico": [
+        {
+          "data": "2025-12-06T17:50:33.641Z",
+          "evento": "Risco criado",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "probabilidade": "1-Muito baixa",
+      "impacto": "5-Muito Alto",
+      "status": "Aberto",
+      "empresaId": "EMP001",
+      "responsavelId": "COL001",
+      "titulo": "tchchfufufufuug",
+      "descricao": "fugifififigkgkgkg\n",
+      "matriz": "Médio",
+      "id": "2393092e-eeb1-4d3c-9ff0-be9715b10208",
+      "historico": [
+        {
+          "data": "2025-12-06T17:50:33.650Z",
+          "evento": "Risco criado",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T17:51:24.889Z",
+          "evento": "Projeto PRJ-1765043484889 gerado",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "probabilidade": "3-Média",
+      "impacto": "5-Muito Alto",
+      "status": "Aberto",
+      "empresaId": "EMP002",
+      "responsavelId": "COL001",
+      "titulo": "Problema servidor",
+      "descricao": "o servidor esta velho nao antendo mais o processo",
+      "matriz": "Alto",
+      "id": "9cdaf2f1-237e-45e0-965b-f1e7fba37f1d",
+      "historico": [
+        {
+          "data": "2025-12-06T18:06:07.862Z",
+          "evento": "Risco criado",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "probabilidade": "3-Média",
+      "impacto": "5-Muito Alto",
+      "status": "Aberto",
+      "empresaId": "EMP002",
+      "responsavelId": "COL001",
+      "titulo": "Problema servidor",
+      "descricao": "o servidor esta velho nao antendo mais o processo",
+      "matriz": "Alto",
+      "id": "1e20aad1-4d53-4558-9768-2dd7005cdd5a",
+      "historico": [
+        {
+          "data": "2025-12-06T18:06:07.871Z",
+          "evento": "Risco criado",
           "autor": "Sistema"
         }
       ]
@@ -190,7 +291,7 @@
     {
       "id": "PRJ004",
       "titulo": "Auditoria de processos internos",
-      "etapa": "Backlog",
+      "etapa": "Concluído",
       "prazo": "2025-12-20T04:24:02.449Z",
       "responsavelId": "COL002",
       "escopo": {
@@ -202,6 +303,16 @@
         {
           "data": "2025-12-06T04:24:02.449Z",
           "evento": "Projeto criado (seed - sem risco associado)",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T17:39:57.824Z",
+          "evento": "Etapa: Backlog → Planejamento",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T17:51:35.961Z",
+          "evento": "Etapa: Planejamento → Concluído",
           "autor": "Sistema"
         }
       ]
@@ -231,7 +342,7 @@
       "id": "PRJ-1764995235703",
       "titulo": "fdfd",
       "riscoId": "3e009685-48d4-480d-8e4d-4d4c6ffed5ba",
-      "etapa": "Execução",
+      "etapa": "Concluído",
       "escopo": {
         "objetivo": "fdfdf",
         "entregas": "fdfd",
@@ -252,9 +363,77 @@
           "data": "2025-12-06T04:27:42.792Z",
           "evento": "Prazo alterado | Escopo alterado",
           "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T17:39:03.647Z",
+          "evento": "Etapa: Execução → Planejamento",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T17:39:17.622Z",
+          "evento": "Etapa: Planejamento → Concluído",
+          "autor": "Sistema"
         }
       ],
       "prazo": "2025-12-11"
+    },
+    {
+      "id": "PRJ-1765042788683",
+      "titulo": "Ausência de colaborador chave",
+      "riscoId": "RSK003",
+      "etapa": "Concluído",
+      "escopo": {
+        "objetivo": "Risco de ausência prolongada afetando operação crítica."
+      },
+      "historico": [
+        {
+          "data": "2025-12-06T17:39:48.683Z",
+          "evento": "Gerado a partir do risco",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T17:51:39.613Z",
+          "evento": "Etapa: Planejamento → Execução",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-06T17:51:45.026Z",
+          "evento": "Etapa: Execução → Concluído",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "id": "PRJ-1765043068811",
+      "titulo": "Ausência de colaborador chave",
+      "riscoId": "RSK003",
+      "etapa": "Planejamento",
+      "escopo": {
+        "objetivo": "Risco de ausência prolongada afetando operação crítica."
+      },
+      "historico": [
+        {
+          "data": "2025-12-06T17:44:28.811Z",
+          "evento": "Gerado a partir do risco",
+          "autor": "Sistema"
+        }
+      ]
+    },
+    {
+      "id": "PRJ-1765043484889",
+      "titulo": "tchchfufufufuug",
+      "riscoId": "2393092e-eeb1-4d3c-9ff0-be9715b10208",
+      "etapa": "Planejamento",
+      "escopo": {
+        "objetivo": "fugifififigkgkgkg\n"
+      },
+      "historico": [
+        {
+          "data": "2025-12-06T17:51:24.889Z",
+          "evento": "Gerado a partir do risco",
+          "autor": "Sistema"
+        }
+      ]
     }
   ]
 }

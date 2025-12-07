@@ -6,7 +6,15 @@ const filePath = path.join(dataDir, 'db.json');
 
 type Empresa = { id: string; nome: string };
 type Colaborador = { id: string; nome: string; email: string; empresaId: string };
-type StakeholdersGrupo = { id: string; nome: string; emails: string[] };
+type StakeholdersGrupo = {
+  id: string;
+  nome: string;
+  descricao?: string;
+  participantesColabIds?: string[];
+  participantesStakeIds?: string[];
+  fechado?: boolean;
+};
+type Stakeholder = { id: string; nome: string; setor?: string; email?: string; telefone?: string };
 
 type Risco = {
   id: string;
@@ -36,6 +44,7 @@ type DB = {
   empresas: Empresa[];
   colaboradores: Colaborador[];
   stakeholdersGrupos: StakeholdersGrupo[];
+  stakeholders?: Stakeholder[];
   riscos: Risco[];
   projetos: Projeto[];
 };
@@ -53,7 +62,11 @@ const ensureData = () => {
         { id: 'COL002', nome: 'Ana', email: 'ana@empresa.com', empresaId: 'EMP002' }
       ],
       stakeholdersGrupos: [
-        { id: 'STKGRP001', nome: 'Comitê de Riscos', emails: ['gestor@empresa.com', 'comite@empresa.com'] }
+        { id: 'STKGRP001', nome: 'Comitê de Riscos', descricao: 'Grupo principal de acompanhamento dos riscos', participantesColabIds: ['COL001'], participantesStakeIds: ['STK001','STK002'], fechado: true }
+      ],
+      stakeholders: [
+        { id: 'STK001', nome: 'Gestor de Qualidade', setor: 'Qualidade', email: 'qualidade@empresa.com', telefone: '(65) 9000-0001' },
+        { id: 'STK002', nome: 'Gestor de TI', setor: 'TI', email: 'ti@empresa.com', telefone: '(65) 9000-0002' }
       ],
       riscos: [
         {
@@ -182,10 +195,42 @@ export class DataStore {
   deleteColaborador(id: string) { const db = readDB(); db.colaboradores = db.colaboradores.filter(e => e.id !== id); writeDB(db); }
 
   getStakeholdersGrupos() { return readDB().stakeholdersGrupos; }
-  addStakeholdersGrupo(g: StakeholdersGrupo) { const db = readDB(); db.stakeholdersGrupos.push(g); writeDB(db); return g; }
+  addStakeholdersGrupo(g: StakeholdersGrupo) { const db = readDB(); db.stakeholdersGrupos.push({ ...g, participantesColabIds: g.participantesColabIds||[], participantesStakeIds: g.participantesStakeIds||[], fechado: !!g.fechado }); writeDB(db); return g; }
   deleteStakeholdersGrupo(id: string) { const db = readDB(); db.stakeholdersGrupos = db.stakeholdersGrupos.filter(e => e.id !== id); writeDB(db); }
+  addParticipantesGrupo(id: string, colabIds: string[], stakeIds: string[]) {
+    const db = readDB();
+    const i = db.stakeholdersGrupos.findIndex(g=>g.id===id);
+    if (i<0) return null;
+    const g = db.stakeholdersGrupos[i];
+    const setCol = new Set([...(g.participantesColabIds||[]), ...(colabIds||[])]);
+    const setStk = new Set([...(g.participantesStakeIds||[]), ...(stakeIds||[])]);
+    db.stakeholdersGrupos[i] = { ...g, participantesColabIds: Array.from(setCol), participantesStakeIds: Array.from(setStk) };
+    writeDB(db);
+    return db.stakeholdersGrupos[i];
+  }
+  fecharGrupo(id: string) {
+    const db = readDB();
+    const i = db.stakeholdersGrupos.findIndex(g=>g.id===id);
+    if (i<0) return null;
+    db.stakeholdersGrupos[i] = { ...db.stakeholdersGrupos[i], fechado: true };
+    writeDB(db);
+    return db.stakeholdersGrupos[i];
+  }
+  abrirGrupo(id: string) {
+    const db = readDB();
+    const i = db.stakeholdersGrupos.findIndex(g=>g.id===id);
+    if (i<0) return null;
+    db.stakeholdersGrupos[i] = { ...db.stakeholdersGrupos[i], fechado: false };
+    writeDB(db);
+    return db.stakeholdersGrupos[i];
+  }
+
+  getStakeholders() { const db = readDB(); return db.stakeholders || []; }
+  addStakeholder(s: Stakeholder) { const db = readDB(); db.stakeholders = db.stakeholders || []; db.stakeholders.push(s); writeDB(db); return s; }
+  deleteStakeholder(id: string) { const db = readDB(); db.stakeholders = (db.stakeholders || []).filter(e => e.id !== id); writeDB(db); }
 
   getRiscos() { return readDB().riscos; }
+  getRisco(id: string) { return readDB().riscos.find(r => r.id === id) || null; }
   addRisco(r: Risco) { const db = readDB(); r.historico = [...(r.historico||[]), { data: new Date().toISOString(), evento: 'Risco criado', autor: 'Sistema' }]; db.riscos.push(r); writeDB(db); return r; }
   updateRisco(id: string, r: Partial<Risco>) {
     const db = readDB();
@@ -206,6 +251,18 @@ export class DataStore {
       db.riscos[i] = next;
       writeDB(db);
       return db.riscos[i];
+    }
+    return null;
+  }
+  addOcorrenciaRisco(id: string, evento: { data: string; evento: string; autor: string }) {
+    const db = readDB();
+    const i = db.riscos.findIndex(x => x.id === id);
+    if (i>=0) {
+      const prev = db.riscos[i];
+      const next = { ...prev, historico: [...(prev.historico||[]), evento] } as Risco;
+      db.riscos[i] = next;
+      writeDB(db);
+      return next;
     }
     return null;
   }
@@ -248,6 +305,48 @@ export class DataStore {
     for (const d of demos) if (!existingIds.has(d.id)) db.projetos.push(d);
     writeDB(db);
     return db.projetos;
+  }
+
+  addDemoData() {
+    const db = readDB();
+    // Empresas adicionais
+    const empIds = new Set(db.empresas.map(e=>e.id));
+    const extraEmpresas: Empresa[] = [
+      { id: 'EMP003', nome: 'Unidade Várzea Grande' },
+      { id: 'EMP004', nome: 'Unidade Rondonópolis' }
+    ];
+    for (const e of extraEmpresas) if (!empIds.has(e.id)) db.empresas.push(e);
+
+    // Colaboradores adicionais
+    const colIds = new Set(db.colaboradores.map(c=>c.id));
+    const extraCols: Colaborador[] = [
+      { id: 'COL003', nome: 'Yago', email: 'yago@empresa.com', empresaId: 'EMP001' },
+      { id: 'COL004', nome: 'Marina', email: 'marina@empresa.com', empresaId: 'EMP003' }
+    ];
+    for (const c of extraCols) if (!colIds.has(c.id)) db.colaboradores.push(c);
+
+    // Riscos adicionais (com diferentes combinações)
+    const riscoIds = new Set(db.riscos.map(r=>r.id));
+    const nowIso = new Date().toISOString();
+    const extraRiscos: Risco[] = [
+      { id: 'RSK010', empresaId: 'EMP003', titulo: 'Interrupção de fornecimento elétrico', descricao: 'Queda de energia pode afetar produção.', analistaId: 'COL004', probabilidade: 'Alta', impacto: 'Alto', status: 'Aberto', matriz: 'Alto', historico: [{ data: nowIso, evento: 'Risco criado (demo)', autor: 'Sistema' }] },
+      { id: 'RSK011', empresaId: 'EMP004', titulo: 'Risco logístico rodoviário', descricao: 'Atrasos por problemas na BR.', analistaId: 'COL003', probabilidade: 'Média', impacto: 'Médio', status: 'Mitigando', matriz: 'Médio', historico: [{ data: nowIso, evento: 'Risco criado (demo)', autor: 'Sistema' }] },
+      { id: 'RSK012', empresaId: 'EMP001', titulo: 'Falha de IoT sensores', descricao: 'Sensores não reportam dados.', analistaId: 'COL001', probabilidade: 'Baixa', impacto: 'Médio', status: 'Aberto', matriz: 'Baixo', historico: [{ data: nowIso, evento: 'Risco criado (demo)', autor: 'Sistema' }] }
+    ];
+    for (const r of extraRiscos) if (!riscoIds.has(r.id)) db.riscos.push(r);
+
+    // Projetos demo (reaproveita função)
+    const existingIds = new Set(db.projetos.map(p=>p.id));
+    const now = Date.now();
+    const extraProj: Projeto[] = [
+      { id: 'PRJ200', titulo: 'Backup de Energia', riscoId: 'RSK010', etapa: 'Planejamento', prazo: new Date(now + 20*24*60*60*1000).toISOString(), responsavelId: 'COL004', escopo: { objetivo: 'Instalar gerador', entregas: 'Gerador instalado', recursos: 'Manutenção' }, historico: [{ data: nowIso, evento: 'Projeto criado (demo)', autor: 'Sistema' }] },
+      { id: 'PRJ201', titulo: 'Plano Logístico Alternativo', riscoId: 'RSK011', etapa: 'Execução', prazo: new Date(now + 10*24*60*60*1000).toISOString(), responsavelId: 'COL003', escopo: { objetivo: 'Rotas alternativas', entregas: 'Mapa e contratos', recursos: 'Logística' }, historico: [{ data: nowIso, evento: 'Projeto criado (demo)', autor: 'Sistema' }] },
+      { id: 'PRJ202', titulo: 'Auditoria de Sensores', riscoId: 'RSK012', etapa: 'Backlog', prazo: new Date(now + 40*24*60*60*1000).toISOString(), responsavelId: 'COL001', escopo: { objetivo: 'Auditar rede IoT', entregas: 'Relatório auditoria', recursos: 'TI' }, historico: [{ data: nowIso, evento: 'Projeto criado (demo)', autor: 'Sistema' }] }
+    ];
+    for (const p of extraProj) if (!existingIds.has(p.id)) db.projetos.push(p);
+
+    writeDB(db);
+    return db;
   }
 
   generateProjetoFromRisco(riscoId: string) {

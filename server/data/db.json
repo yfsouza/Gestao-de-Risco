@@ -1,0 +1,155 @@
+{
+  "empresas": [
+    { "id": "EMP001", "nome": "Matriz Lucas do Rio Verde" },
+    { "id": "EMP002", "nome": "Filial Sinop" },
+    { "id": "EMP003", "nome": "Unidade Sorriso" }
+  ],
+  "colaboradores": [
+    { "id": "COL001", "nome": "Carlos", "email": "carlos@empresa.com", "empresaId": "EMP001" },
+    { "id": "COL002", "nome": "Ana", "email": "ana@empresa.com", "empresaId": "EMP002" },
+    { "id": "COL003", "nome": "Marina", "email": "marina@empresa.com", "empresaId": "EMP003" }
+  ],
+  "stakeholdersGrupos": [
+    { "id": "STKGRP001", "nome": "Comitê de Riscos", "emails": ["gestor@empresa.com", "comite@empresa.com"] },
+    { "id": "STKGRP002", "nome": "Diretoria", "emails": ["diretoria@empresa.com"] }
+  ],
+  "riscos": [
+    {
+      "id": "RSK001",
+      "empresaId": "EMP001",
+      "titulo": "Falha de refrigeração na câmara fria",
+      "descricao": "Risco de aumento de temperatura afetando qualidade das carnes.",
+      "analistaId": "COL001",
+      "probabilidade": "Média",
+      "impacto": "Alto",
+      "status": "Aberto",
+      "matriz": "Operacional",
+      "historico": [
+        { "data": "2025-12-06T10:00:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "RSK002",
+      "empresaId": "EMP002",
+      "titulo": "Falta de insumos embalagens",
+      "descricao": "Risco de interrupção por atraso de fornecedor de embalagens.",
+      "analistaId": "COL002",
+      "probabilidade": "Baixa",
+      "impacto": "Médio",
+      "status": "Encerrado",
+      "matriz": "Supply",
+      "historico": [
+        { "data": "2025-12-06T10:05:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" },
+        { "data": "2025-12-06T11:00:00.000Z", "evento": "Risco encerrado", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "RSK003",
+      "empresaId": "EMP001",
+      "titulo": "Ausência de colaborador chave",
+      "descricao": "Risco de ausência prolongada afetando operação crítica.",
+      "analistaId": "COL001",
+      "probabilidade": "Alta",
+      "impacto": "Médio",
+      "status": "Mitigando",
+      "matriz": "RH",
+      "historico": [
+        { "data": "2025-12-06T10:10:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" },
+        { "data": "2025-12-06T12:00:00.000Z", "evento": "Plano de mitigação iniciado", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "RSK004",
+      "empresaId": "EMP002",
+      "titulo": "Falha de rede de TI",
+      "descricao": "Intermitência na rede pode afetar integrações e ERPs.",
+      "analistaId": "COL002",
+      "probabilidade": "Média",
+      "impacto": "Baixo",
+      "status": "Aberto",
+      "matriz": "Tecnologia",
+      "historico": [
+        { "data": "2025-12-06T10:15:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "RSK005",
+      "empresaId": "EMP001",
+      "titulo": "Não conformidade sanitária",
+      "descricao": "Possível autuação por não conformidade em inspeção.",
+      "analistaId": "COL001",
+      "probabilidade": "Alta",
+      "impacto": "Alto",
+      "status": "Aberto",
+      "matriz": "Regulatório",
+      "historico": [
+        { "data": "2025-12-06T10:20:00.000Z", "evento": "Risco criado (seed)", "autor": "Sistema" }
+      ]
+    }
+  ],
+  "projetos": [
+    {
+      "id": "PRJ001",
+      "titulo": "Plano de contingência da refrigeração",
+      "riscoId": "RSK001",
+      "etapa": "Planejamento",
+      "prazo": "2026-01-13T00:00:00.000Z",
+      "responsavelId": "COL001",
+      "escopo": {
+        "objetivo": "Garantir manutenção preventiva e sensores redundantes",
+        "entregas": "Checklist de manutenção; instalação de sensores",
+        "recursos": "Equipe de manutenção; orçamento"
+      },
+      "historico": [
+        { "data": "2025-12-06T10:30:00.000Z", "evento": "Projeto criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "PRJ002",
+      "titulo": "Plano alternativo para embalagens",
+      "riscoId": "RSK002",
+      "etapa": "Execução",
+      "prazo": "2025-12-09T00:00:00.000Z",
+      "responsavelId": "COL002",
+      "escopo": {
+        "objetivo": "Qualificar fornecedor backup",
+        "entregas": "Contrato assinado; lote teste recebido",
+        "recursos": "Compras; jurídico"
+      },
+      "historico": [
+        { "data": "2025-12-06T10:35:00.000Z", "evento": "Projeto criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "PRJ003",
+      "titulo": "Treinamento cross para função crítica",
+      "riscoId": "RSK003",
+      "etapa": "Concluído",
+      "prazo": "2025-12-04T00:00:00.000Z",
+      "responsavelId": "COL001",
+      "escopo": {
+        "objetivo": "Cobertura por equipe treinada",
+        "entregas": "Matriz de habilidades atualizada",
+        "recursos": "RH; operação"
+      },
+      "historico": [
+        { "data": "2025-12-06T10:40:00.000Z", "evento": "Projeto criado (seed)", "autor": "Sistema" }
+      ]
+    },
+    {
+      "id": "PRJ004",
+      "titulo": "Auditoria de processos internos",
+      "etapa": "Backlog",
+      "prazo": "2025-12-20T00:00:00.000Z",
+      "responsavelId": "COL002",
+      "escopo": {
+        "objetivo": "Mapear riscos operacionais sem vínculo direto",
+        "entregas": "Relatório de auditoria",
+        "recursos": "Equipe de qualidade"
+      },
+      "historico": [
+        { "data": "2025-12-06T10:45:00.000Z", "evento": "Projeto criado (seed - sem risco associado)", "autor": "Sistema" }
+      ]
+    }
+  ]
+}
