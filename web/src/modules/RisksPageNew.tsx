@@ -113,6 +113,8 @@ export const RisksPage: React.FC<{ base: AppState; setScreen?: React.Dispatch<Re
       await api.deleteRisco(id);
       toast.show('Risco excluído com sucesso', 'success');
       load();
+      // Se houver setter de tela, voltar para lista de riscos
+      if (setScreen) setScreen('risks');
     } catch {
       toast.show('Erro ao excluir risco', 'error');
     }
@@ -126,6 +128,11 @@ export const RisksPage: React.FC<{ base: AppState; setScreen?: React.Dispatch<Re
             <h2><i className="fa-solid fa-file-circle-plus"></i> Cadastro de Risco</h2>
             <div className="form-actions">
               <button className="btn-outline" type="button" onClick={()=>setForm({ probabilidade: '3-Média', impacto: '3-Médio', status: 'Em Andamento', matriz: 'Default' } as any)}><i className="fa-solid fa-eraser"></i> Limpar formulário</button>
+              {editingId && (
+                <button className="btn-outline btn-danger" type="button" onClick={async () => { if (editingId) await handleDelete(editingId); }} style={{ marginLeft: 8 }}>
+                  <i className="fa-solid fa-trash"></i> Excluir
+                </button>
+              )}
               <button className="btn-outline" type="button" onClick={()=>{ setSelectedRiskId && setSelectedRiskId(null); setEditingId(null); setForm({ probabilidade: '3-Média', impacto: '3-Médio', status: 'Em Andamento' } as any); if (setScreen) setScreen('risks'); }} style={{ marginLeft: 8 }}>Voltar</button>
             </div>
           </div>

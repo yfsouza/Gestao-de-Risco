@@ -1,101 +1,36 @@
 {
   "empresas": [
     {
-      "id": "EMP001",
-      "nome": "Matriz Lucas do Rio Verde"
-    },
-    {
-      "id": "EMP002",
-      "nome": "Filial Sinop"
-    },
-    {
-      "id": "EMP1765071004251",
-      "nome": "aa"
-    },
-    {
       "id": "EMP1765071004683",
-      "nome": ""
+      "nome": "Frigosul (Várzea grande)"
+    },
+    {
+      "id": "EMP001",
+      "nome": "Biodiesl"
     },
     {
       "id": "EMP1765132611037",
-      "nome": "frigosul"
+      "nome": "Sebo (Várzea grande)"
+    },
+    {
+      "id": "EMP002",
+      "nome": "Frigosul (Vila maria)"
     }
   ],
   "colaboradores": [
     {
-      "id": "COL001",
-      "nome": "Carlos",
-      "email": "carlos@empresa.com",
-      "empresaId": "EMP001"
-    },
-    {
-      "id": "COL1765072079827",
-      "nome": "k",
-      "email": "k",
-      "empresaId": ""
-    },
-    {
-      "id": "COL011",
-      "nome": "Helena",
-      "email": "helena@empresa.com",
-      "empresaId": "EMP010"
-    },
-    {
-      "id": "COL012",
-      "nome": "Miguel",
-      "email": "miguel@empresa.com",
-      "empresaId": "EMP009"
-    },
-    {
-      "id": "COL013",
-      "nome": "Isabela",
-      "email": "isabela@empresa.com",
-      "empresaId": "EMP008"
-    },
-    {
-      "id": "COL1765081859020",
-      "nome": "Fornecedor A",
-      "email": "fornecedorA@exemplo.com",
-      "empresaId": "EMP001",
-      "departamento": "ti"
-    },
-    {
-      "id": "COL1765082099628",
-      "nome": "Auditor B",
-      "email": "auditorB@exemplo.com",
-      "empresaId": "EMP001",
-      "departamento": ""
-    },
-    {
-      "id": "COL1765082163244",
-      "nome": "Cliente C",
-      "email": "clienteC@exemplo.com",
-      "empresaId": "EMP001",
-      "departamento": ""
-    },
-    {
-      "id": "COL1765082322186",
-      "nome": "d",
-      "email": "ddddddddddddd@gggggggggggggggg",
-      "empresaId": "EMP001",
-      "departamento": "ti"
-    },
-    {
-      "id": "COL1765132575720",
+      "id": "COL1765288101715",
       "nome": "yago",
-      "email": "suporte@pantaiera.inde.br",
-      "empresaId": "EMP1765132611037",
-      "departamento": "ti"
+      "email": "",
+      "empresaId": "EMP1765071004683",
+      "departamento": ""
     },
     {
-      "nome": "vdv",
-      "email": "suporte@pantaiera.inde.br"
-    },
-    {
-      "id": "COLMIWDESS4",
-      "nome": "l,l,",
-      "email": "suporte@pantaiera.inde.br",
-      "setor": "cc"
+      "id": "COL1765288969365",
+      "nome": "mateus",
+      "email": "",
+      "empresaId": "EMP001",
+      "departamento": ""
     }
   ],
   "stakeholdersGrupos": [
@@ -265,7 +200,7 @@
       "analistaId": "COL001",
       "probabilidade": "Alta",
       "impacto": "Alto",
-      "status": "Aberto",
+      "status": "Encerrado",
       "matriz": "Regulatório",
       "historico": [
         {
@@ -276,6 +211,16 @@
         {
           "data": "2025-12-08T03:03:56.203Z",
           "evento": "Projeto PRJ-1765163036203 gerado",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T13:32:39.753Z",
+          "evento": "Status: Aberto → Mitigando",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T13:32:43.290Z",
+          "evento": "Status: Mitigando → Encerrado",
           "autor": "Sistema"
         }
       ]
@@ -545,7 +490,9 @@
             }
           ]
         }
-      ]
+      ],
+      "excluido": true,
+      "dataExclusao": "2025-12-09T13:33:20.547Z"
     },
     {
       "id": "PRJ-1765163036726",
@@ -595,32 +542,38 @@
             }
           ]
         }
-      ]
+      ],
+      "excluido": true,
+      "dataExclusao": "2025-12-09T13:33:22.416Z"
     }
   ],
   "stakeholders": [],
   "categoriasRisco": [
-    {
-      "id": "CAT012",
-      "nome": "Cibern�tico"
-    },
-    {
-      "id": "CAT013",
-      "nome": "Seguran�a F�sica"
-    },
     {
       "nome": "h",
       "descricao": "h"
     },
     {
       "nome": "Opera��es Cr�ticas"
+    },
+    {
+      "nome": "Cibernético"
+    },
+    {
+      "nome": "Operações Críticas"
+    },
+    {
+      "nome": "Segurança Física"
+    },
+    {
+      "nome": "Operações Criticas"
     }
   ],
   "categorias": [
     {
-      "id": "CAT-1765114247308",
-      "nome": "aa",
-      "descricao": "aa"
+      "id": "CAT-1765287077236",
+      "nome": "Infraestrutura",
+      "descricao": ""
     }
   ]
 }

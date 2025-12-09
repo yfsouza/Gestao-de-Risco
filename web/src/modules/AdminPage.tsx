@@ -40,12 +40,64 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
   const deleteEmpresa = async (id: string) => { await fetch(`/api/empresas/${id}`, { method: 'DELETE' }); reload(); toast.show('Empresa excluída.', 'success'); };
   const openEditEmpresa = (e: Empresa) => { setEditType('empresa'); setEditData({ ...e }); setEditOpen(true); };
   const addColab = async () => {
-    const c: Colaborador = { id: `COL${Date.now()}`, ...col } as any;
-    await fetch('/api/colaboradores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(c) });
-    setCol({ nome: '', email: '', empresaId: '' }); reload();
-    toast.show('Colaborador cadastrado com sucesso!', 'success');
+    try {
+      const payload = { nome: col.nome, email: col.email, empresaId: col.empresaId };
+      const res = await fetch('/api/colaboradores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error(`Erro: ${res.status}`);
+      const created = await res.json();
+      // Atualiza base local imediatamente
+      setBase(prev => ({ ...prev, colaboradores: [...(prev.colaboradores||[]), created] }));
+      setCol({ nome: '', email: '', empresaId: '' });
+      toast.show('Colaborador cadastrado com sucesso!', 'success');
+    } catch (e:any) {
+      console.error('Erro ao adicionar colaborador', e);
+      toast.show(e?.message || 'Erro ao cadastrar colaborador', 'error');
+    }
+    await reload();
   };
-  const deleteColab = async (id: string) => { await fetch(`/api/colaboradores/${id}`, { method: 'DELETE' }); reload(); toast.show('Colaborador excluído.', 'success'); };
+  const deleteColab = async (idOrName?: string) => {
+    try {
+      if (!confirm('Confirma exclusão deste colaborador?')) return;
+      if (!idOrName) {
+        toast.show('ID ou nome do colaborador não informado.', 'error');
+        return;
+      }
+      // Normalizar input
+      const needle = String(idOrName).trim();
+      const needleLower = needle.toLowerCase();
+      // Se id corresponde diretamente a um colaborador, usa ele
+      let id = (base.colaboradores || []).some(c => c.id === needle) ? needle : null as string | null;
+
+      // Tentar localizar por nome exato (case-insensitive) se não é id
+      if (!id) {
+        const byName = (base.colaboradores || []).find(c => {
+          const name = (c.nome || '').toString();
+          return name === needle || name.toLowerCase() === needleLower;
+        });
+        if (byName) id = byName.id;
+      }
+
+      // Buscar por correspondência parcial no nome
+      if (!id) {
+        const partial = (base.colaboradores || []).find(c => {
+          const name = (c.nome || '').toString().toLowerCase();
+          return needleLower && name.includes(needleLower);
+        });
+        if (partial) id = partial.id;
+      }
+
+      if (!id) { toast.show('Colaborador não encontrado para exclusão.', 'error'); return; }
+
+      console.debug('Excluindo colaborador id=', id, 'orig=', idOrName);
+      const res = await fetch(`/api/colaboradores/${id}`, { method: 'DELETE' });
+      if (!res.ok) { const txt = await res.text().catch(()=>String(res.status)); throw new Error(`Falha ao excluir: ${res.status} ${txt}`); }
+      await reload();
+      toast.show('Colaborador excluído.', 'success');
+    } catch (e:any) {
+      console.error('Erro ao excluir colaborador', e);
+      toast.show(e?.message || 'Erro ao excluir colaborador', 'error');
+    }
+  };
   const openEditColab = (c: Colaborador) => { setEditType('colaborador'); setEditData({ ...c }); setEditOpen(true); };
   const addGrupo = async () => {
     const g: any = { id: `STK${Date.now()}`, nome: grp.nome, descricao: grp.descricao, participantesColabIds: [], participantesStakeIds: [], fechado: false };
@@ -76,10 +128,39 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
         await reload();
         toast.show('Empresa atualizada com sucesso!', 'success');
       } else if (editType === 'colaborador') {
-        const c: Partial<Colaborador> = { nome: editData.nome, email: editData.email, empresaId: editData.empresaId } as any;
-        await fetch(`/api/colaboradores/${editData.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(c) });
-        await reload();
-        toast.show('Colaborador atualizado com sucesso!', 'success');
+        // Tentar resolver id do colaborador a partir de vários campos possíveis
+        const colaboradorId = editData.id || (editData as any).__editId || (editData as any).__col?.id || null;
+        const payload: Partial<Colaborador> = { nome: editData.nome, email: editData.email, empresaId: editData.empresaId, departamento: editData.departamento } as any;
+
+        if (!colaboradorId) {
+          // Se não há id no registro, tentar atualizar pelo email (novo endpoint)
+          if (!editData.email) throw new Error('Não foi possível identificar colaborador sem ID. Reabra a edição a partir da lista de colaboradores.');
+          // Se usuário informou um ID no campo, inclua no payload para que o servidor atribua
+          if (editData.id) (payload as any).id = editData.id;
+          console.debug('Atualizando colaborador por email:', { email: editData.email, payload });
+          const res = await fetch(`/api/colaboradores/by-email`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+          if (!res.ok) {
+            const txt = await res.text().catch(()=>String(res.status));
+            throw new Error(`Falha ao atualizar colaborador: ${res.status} ${txt}`);
+          }
+          const updated = await res.json();
+          setBase(prev => ({ ...prev, colaboradores: (prev.colaboradores || []).map(col => (col.email === updated.email ? updated : col)) }));
+          await reload();
+          toast.show('Colaborador atualizado com sucesso!', 'success');
+        } else {
+          console.debug('Atualizando colaborador:', { id: colaboradorId, payload });
+          const res = await fetch(`/api/colaboradores/${colaboradorId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+          if (!res.ok) {
+            const txt = await res.text().catch(()=>String(res.status));
+            throw new Error(`Falha ao atualizar colaborador: ${res.status} ${txt}`);
+          }
+          const updated = await res.json();
+          // Atualiza o estado base localmente para refletir a alteração imediatamente
+          setBase(prev => ({ ...prev, colaboradores: (prev.colaboradores || []).map(col => col.id === updated.id ? updated : col) }));
+          // Também tenta reload para garantir consistência com o servidor
+          await reload();
+          toast.show('Colaborador atualizado com sucesso!', 'success');
+        }
       } else if (editType === 'grupo') {
         await deleteGrupo(editData.id);
         const g: StakeholdersGrupo = { id: editData.id, nome: editData.nome, emails: (editData.emailsText||'').split(',').map((s:string)=>s.trim()).filter(Boolean) };
@@ -95,8 +176,10 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
       setEditOpen(false);
       setEditType(null);
       setEditData(null);
-    } catch (e) {
-      toast.show('Falha ao salvar alterações.', 'error');
+    } catch (e: any) {
+      console.error('Erro ao salvar edição:', e);
+      const msg = (e && e.message) ? e.message : 'Falha ao salvar alterações.';
+      toast.show(msg, 'error');
     }
   };
 
@@ -373,10 +456,12 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
           </div>
           <div className="table-responsive">
             <table className="app-table">
-              <thead><tr><th>Nome</th><th>Email</th><th></th></tr></thead>
-              <tbody>{colaboradoresView.map(c=>(
-                <tr key={c.id}>
-                  <td>{c.nome}</td><td>{c.email}</td>
+              <thead><tr><th style={{ width: 110 }}>ID</th><th>Nome</th><th>Email</th><th></th></tr></thead>
+                  <tbody>{colaboradoresView.map(c=>(
+                    <tr key={c.id}>
+                      <td style={{ fontFamily: 'monospace' }}>{c.id}</td>
+                      <td>{c.nome}</td>
+                      <td>{c.email}</td>
                   <td style={{ textAlign: 'right' }}>
                     <button className="btn-outline" onClick={()=>openEditColab(c)} title="Editar"><i className="fa-solid fa-pen"></i></button>
                     <button className="btn-outline" onClick={()=>deleteColab(c.id)} title="Excluir"><i className="fa-solid fa-trash"></i></button>
@@ -479,6 +564,7 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
                           {s.__isInterno ? (
                             <>
                               <button className="btn-outline" title="Editar" onClick={()=>openEditColab(s.__col)} style={{ padding: '3px 6px' }}><i className="fa-solid fa-pen"></i></button>
+                              <button className="btn-outline" title="Excluir" onClick={()=>deleteColab(s.__col.id)} style={{ padding: '3px 6px', marginLeft: 6 }}><i className="fa-solid fa-trash"></i></button>
                             </>
                           ) : (
                             <>
@@ -897,14 +983,24 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
           </div>
         )}
         {editType === 'colaborador' && editData && (
-          <div className="filters form-compact">
-            <input placeholder="Nome" value={editData.nome||''} onChange={e=>setEditData({ ...editData, nome: e.target.value })} />
-            <input placeholder="Email" value={editData.email||''} onChange={e=>setEditData({ ...editData, email: e.target.value })} />
-            <select value={editData.empresaId||''} onChange={e=>setEditData({ ...editData, empresaId: e.target.value })}>
-              <option value="">Empresa</option>
-              {base.empresas.map(e=>(<option key={e.id} value={e.id}>{e.nome}</option>))}
-            </select>
-          </div>
+            <div className="filters form-compact">
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <label style={{ minWidth: 90 }}>ID</label>
+                <input
+                  value={editData.id || editData.__editId || (editData.__col && editData.__col.id) || ''}
+                  onChange={e=>setEditData({ ...editData, id: e.target.value })}
+                  readOnly={!!(editData.id || editData.__editId || (editData.__col && editData.__col.id))}
+                  placeholder={!(editData.id || editData.__editId || (editData.__col && editData.__col.id)) ? 'Informe um ID (ex: COL123)' : ''}
+                  style={{ fontFamily: 'monospace' }}
+                />
+              </div>
+              <input placeholder="Nome" value={editData.nome||''} onChange={e=>setEditData({ ...editData, nome: e.target.value })} />
+              <input placeholder="Email" value={editData.email||''} onChange={e=>setEditData({ ...editData, email: e.target.value })} />
+              <select value={editData.empresaId||''} onChange={e=>setEditData({ ...editData, empresaId: e.target.value })}>
+                <option value="">Empresa</option>
+                {base.empresas.map(e=>(<option key={e.id} value={e.id}>{e.nome}</option>))}
+              </select>
+            </div>
         )}
         {editType === 'grupo' && editData && (
           <div className="filters form-compact">

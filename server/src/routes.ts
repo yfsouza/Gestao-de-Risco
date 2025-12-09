@@ -13,14 +13,57 @@ router.delete('/empresas/:id', (req, res) => { store.deleteEmpresa(req.params.id
 // Colaboradores
 router.get('/colaboradores', (req, res) => res.json(store.getColaboradores()));
 router.post('/colaboradores', (req, res) => {
-  const id = 'COL' + Date.now().toString(36).toUpperCase();
+  const bodyId = (req.body && req.body.id) ? String(req.body.id).toUpperCase().trim() : null;
+  const cols = store.getColaboradores();
+  // If client provided an id, validate uniqueness
+  if (bodyId) {
+    const exists = cols.some(c => (c.id || '').toUpperCase() === bodyId);
+    if (exists) return res.status(409).json({ error: 'ID already exists' });
+    const colaborador = { id: bodyId, ...req.body };
+    return res.json(store.addColaborador(colaborador));
+  }
+  // Gerar ID incremental no formato COL### com padding de 3 dígitos
+  let maxNum = 0;
+  cols.forEach(c => {
+    const m = String(c.id || '').match(/COL(\d+)/);
+    if (m) {
+      const n = parseInt(m[1], 10);
+      if (n > maxNum) maxNum = n;
+    }
+  });
+  const next = (maxNum + 1).toString().padStart(3, '0');
+  const id = 'COL' + next;
   const colaborador = { id, ...req.body };
   res.json(store.addColaborador(colaborador));
 });
 router.put('/colaboradores/:id', (req, res) => {
+  const newId = req.body && req.body.id ? String(req.body.id).toUpperCase().trim() : null;
+  const cols = store.getColaboradores();
+  // If client attempts to change the id, ensure uniqueness
+  if (newId && newId !== String(req.params.id).toUpperCase()) {
+    const exists = cols.some(col => (col.id || '').toUpperCase() === newId);
+    if (exists) return res.status(409).json({ error: 'ID already exists' });
+  }
   const c = store.updateColaborador(req.params.id, req.body);
   if (!c) return res.sendStatus(404);
   res.json(c);
+});
+
+// Atualizar colaborador buscando pelo email (útil quando o id está em branco no registro)
+router.put('/colaboradores/by-email', (req, res) => {
+  const email = req.body && req.body.email ? String(req.body.email).trim() : null;
+  if (!email) return res.status(400).json({ error: 'Email é necessário para atualizar por email' });
+  const cols = store.getColaboradores();
+  const existing = cols.find(c => (c.email || '').toString() === email);
+  if (!existing) return res.sendStatus(404);
+  const newId = req.body && req.body.id ? String(req.body.id).toUpperCase().trim() : null;
+  if (newId && newId !== (existing.id || '').toUpperCase()) {
+    const dup = cols.some(c => (c.id || '').toUpperCase() === newId);
+    if (dup) return res.status(409).json({ error: 'ID already exists' });
+  }
+  const updated = store.updateColaborador(existing.id || '', req.body);
+  if (!updated) return res.sendStatus(404);
+  res.json(updated);
 });
 router.delete('/colaboradores/:id', (req, res) => { store.deleteColaborador(req.params.id); res.sendStatus(204); });
 // Pessoas internas (alias)
