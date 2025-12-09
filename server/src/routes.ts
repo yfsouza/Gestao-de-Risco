@@ -104,6 +104,7 @@ router.post('/riscos/:id/ocorrencias', (req, res) => {
 // Projetos
 router.get('/projetos', (req, res) => res.json(store.getProjetos()));
 router.put('/projetos/:id', (req, res) => res.json(store.updateProjeto(req.params.id, req.body)));
+router.delete('/projetos/:id', (req, res) => { store.deleteProjeto(req.params.id); res.sendStatus(204); });
 // Dev: popular demos
 router.post('/projetos/dev/seed', (req, res) => res.json(store.addDemoProjects()));
 router.post('/dev/seed-all', (req, res) => res.json(store.addDemoData()));

@@ -188,6 +188,11 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
     load();
   };
 
+  const handleEncerramento = async (id: string) => {
+    if (!window.confirm('Deseja prosseguir com o encerramento do projeto?')) return;
+    await updateEtapa(id, 'Concluído');
+  };
+
   const removerProjeto = async (id: string) => {
     if (!window.confirm('Tem certeza que deseja remover este projeto do Kanban?')) return;
     try {
@@ -228,6 +233,17 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
       load();
     } catch {
       toast.show('Erro ao excluir projeto', 'error');
+    }
+  };
+
+  const toggleMonitoramento = async (id: string, enable: boolean) => {
+    try {
+      // When enabling monitoramento, also ensure project is in 'Execução'
+      await api.updateProjeto(id, { monitoramento: enable, ...(enable ? { etapa: 'Execução' } : {}) });
+      toast.show(enable ? 'Projeto movido para Monitoramento' : 'Projeto removido de Monitoramento', 'success');
+      load();
+    } catch {
+      toast.show('Erro ao atualizar monitoramento', 'error');
     }
   };
 
@@ -577,7 +593,18 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
                       <button className="btn-outline btn-small" title={p.etapa==='Backlog' ? 'Já está no Backlog' : (p as any).tapPdf ? 'TAP já foi gerada - não é possível voltar' : 'Mover para Backlog'} disabled={p.etapa==='Backlog' || !!(p as any).tapPdf} onClick={()=>updateEtapa(p.id, 'Backlog')}><i className="fa-solid fa-arrow-left"></i></button>
                       <button className="btn-outline btn-small" title="Mover para Planejamento (Gerar TAP)" disabled={p.etapa==='Planejamento' || p.etapa==='Execução' || !!(p as any).tapPdf} onClick={()=>moverParaPlanejamentoComTAP(p)}><i className="fa-solid fa-list-check"></i></button>
                       <button className="btn-outline btn-small" title="Mover para Execução" disabled={p.etapa==='Execução'} onClick={()=>iniciarFluxoExecucao(p)}><i className="fa-solid fa-person-running"></i></button>
-                      <button className="btn-outline btn-small" title="Mover para Concluído" disabled={p.etapa==='Concluído'} onClick={()=>updateEtapa(p.id, 'Concluído')}><i className="fa-solid fa-flag-checkered"></i></button>
+                      <button className="btn-outline btn-small" title="Mover para Concluído" disabled={p.etapa==='Concluído'} onClick={()=>handleEncerramento(p.id)}><i className="fa-solid fa-flag-checkered"></i></button>
+                      {(p.etapa === 'Execução' || p.etapa === 'Concluído') && (
+                        (p as any).monitoramento ? (
+                          <button className="btn-outline btn-small" title="Remover de Monitoramento" onClick={() => toggleMonitoramento(p.id, false)}>
+                            <i className="fa-solid fa-chart-line"></i>
+                          </button>
+                        ) : (
+                          <button className="btn-outline btn-small" title="Mover para Monitoramento" onClick={() => toggleMonitoramento(p.id, true)}>
+                            <i className="fa-solid fa-chart-line"></i>
+                          </button>
+                        )
+                      )}
                       {(p.etapa === 'Planejamento' || (p as any).tapGerada) && (
                         <button className="btn-outline btn-small btn-tap" title="Ver/Editar TAP" onClick={()=>abrirTAP(p)}><i className="fa-solid fa-file-contract"></i></button>
                       )}

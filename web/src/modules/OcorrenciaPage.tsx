@@ -211,6 +211,18 @@ export const OcorrenciaPage: React.FC<OcorrenciaPageProps> = ({
     onVoltar();
   };
 
+  // Mover para Monitoramento
+  const handleMoverParaMonitoramento = async () => {
+    if (!confirm('Deseja mover este risco para a coluna Monitoramento?')) return;
+    try {
+      await api.updateRisco(riscoId, { status: 'Monitoramento' });
+      toast.show('Risco movido para Monitoramento', 'success');
+      onVoltar();
+    } catch (err) {
+      toast.show('Erro ao mover para Monitoramento', 'error');
+    }
+  };
+
   const getResponsavelNome = () => {
     const colab = colaboradores.find(c => c.id === responsavelId);
     return colab ? colab.nome : '';
@@ -219,6 +231,15 @@ export const OcorrenciaPage: React.FC<OcorrenciaPageProps> = ({
   return (
     <div className="ocorrencia-page">
       <div className="ocorrencia-header">
+        <button
+          type="button"
+          className="btn-icon btn-back"
+          title="Voltar para Monitoramento"
+          onClick={onVoltar}
+          aria-label="Voltar para Monitoramento"
+        >
+          <i className="fa-solid fa-arrow-left"></i>
+        </button>
         <h1><i className="fa-solid fa-exclamation-circle"></i> Informar Ocorrência</h1>
         {riscoTitulo && <span className="ocorrencia-risco-titulo">Risco: {riscoTitulo}</span>}
       </div>
@@ -418,6 +439,15 @@ export const OcorrenciaPage: React.FC<OcorrenciaPageProps> = ({
         
         {/* Ações */}
         <div className="ocorrencia-actions">
+          <button
+            type="button"
+            className="btn-icon"
+            title="Mover para Monitoramento"
+            onClick={handleMoverParaMonitoramento}
+            aria-label="Mover para Monitoramento"
+          >
+            <i className="fa-solid fa-arrow-up-right-from-square"></i>
+          </button>
           <button type="button" className="btn btn-secondary" onClick={handleCancelar}>
             <i className="fa-solid fa-times"></i> Cancelar
           </button>

@@ -40,6 +40,9 @@ type Projeto = {
   responsavelId?: string;
   escopo: { objetivo?: string; entregas?: string; recursos?: string };
   historico: { data: string; evento: string; autor: string }[];
+  tapPdf?: string;
+  tapPdfFilename?: string;
+  tapGeradaEm?: string;
 };
 
 type DB = {
@@ -352,6 +355,7 @@ export class DataStore {
       if (p.prazo && p.prazo !== prev.prazo) changes.push('Prazo alterado');
       if (p.responsavelId && p.responsavelId !== prev.responsavelId) changes.push('Responsável alterado');
       if (p.escopo && JSON.stringify(p.escopo) !== JSON.stringify(prev.escopo)) changes.push('Escopo alterado');
+      if (p.tapPdf && !prev.tapPdf) changes.push('TAP PDF gerada');
       if (changes.length) {
         next.historico = [...(prev.historico||[]), { data: new Date().toISOString(), evento: changes.join(' | '), autor: 'Sistema' }];
       }
@@ -360,6 +364,12 @@ export class DataStore {
       return db.projetos[i];
     }
     return null;
+  }
+
+  deleteProjeto(id: string) {
+    const db = readDB();
+    db.projetos = db.projetos.filter(p => p.id !== id);
+    writeDB(db);
   }
 
   addDemoProjects() {
@@ -428,7 +438,7 @@ export class DataStore {
       id: `PRJ-${Date.now()}`,
       titulo: r.titulo,
       riscoId: r.id,
-      etapa: 'Planejamento',
+      etapa: 'Backlog',
       escopo: { objetivo: r.descricao },
       historico: [{ data: new Date().toISOString(), evento: 'Gerado a partir do risco', autor: 'Sistema' }]
     };

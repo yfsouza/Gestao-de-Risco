@@ -37,6 +37,17 @@ export const RisksPage: React.FC<{ base: AppState }> = ({ base }) => {
     catch { toast.show('Erro ao gerar projeto', 'error'); }
   };
 
+  const moverParaMonitoramento = async (id: string) => {
+    if (!confirm('Deseja mover este risco para a coluna Monitoramento?')) return;
+    try {
+      await api.updateRisco(id, { status: 'Monitoramento' });
+      toast.show('Risco movido para Monitoramento', 'success');
+      load();
+    } catch {
+      toast.show('Erro ao mover para Monitoramento', 'error');
+    }
+  };
+
   const openHistory = (risk: Risco) => { setHistoryRisk(risk); setHistoryOpen(true); };
 
   const parseNivelNum = (txt?: string) => {
@@ -203,6 +214,9 @@ export const RisksPage: React.FC<{ base: AppState }> = ({ base }) => {
                   <td>{(() => { const nivel = nivelFrom(r.probabilidade, r.impacto); const c = nivelBadge(nivel); return <span className="badge" style={badgeStyle(c.bg, c.fg)}>{nivel}</span>; })()}</td>
                   <td>
                     <button className="btn-success btn-small" onClick={()=>gerarProjeto(r.id)}><i className="fa-solid fa-diagram-project"></i> Gerar Projeto</button>
+                    <button className="btn-icon" title="Mover para Monitoramento" aria-label="Mover para Monitoramento" onClick={()=>moverParaMonitoramento(r.id)}>
+                      <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                    </button>
                     <button className="btn-danger btn-small" onClick={async()=>{ if (confirm('Deseja excluir este risco?')) { try { await api.deleteRisco(r.id); toast.show('Risco exclu├¡do', 'success'); load(); } catch { toast.show('Erro ao excluir', 'error'); } } }}><i className="fa-solid fa-trash"></i> Excluir</button>
                   </td>
                 </tr>
