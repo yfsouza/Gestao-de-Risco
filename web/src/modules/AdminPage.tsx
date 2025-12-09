@@ -3,6 +3,7 @@ import { AppState, Empresa, Colaborador, StakeholdersGrupo } from './App';
 import { api } from '../services/api';
 import { Modal } from '../components/Modal';
 import { useToast } from '../components/Toast';
+import ParametrizacaoForm from './ParametrizacaoForm';
 
 export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void }> = ({ base, setBase }) => {
   const toast = useToast();
@@ -140,6 +141,7 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
         <nav style={{ display:'flex', alignItems:'center', gap: 0, borderBottom: '1px solid #e0e0e0', background: '#fafafa' }}>
           {[
             { key: 'stakeholders', icon: 'fa-user', label: 'Pessoa' },
+            { key: 'parametrizacao', icon: 'fa-sliders', label: 'Parametrização' },
             { key: 'grupos', icon: 'fa-users', label: 'Grupo' },
             { key: 'empresas', icon: 'fa-building', label: 'Empresa' },
             { key: 'categorias', icon: 'fa-tags', label: 'Categoria' },
@@ -341,6 +343,18 @@ export const AdminPage: React.FC<{ base: AppState; setBase: (s: AppState)=>void 
               </div>
             </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {screen === 'parametrizacao' && (
+        <div className="card config-card" style={{ padding: 20 }}>
+          <div className="config-header">
+            <h3><i className="fa-solid fa-sliders"></i> Parametrização</h3>
+            <p>Parâmetros globais do sistema</p>
+          </div>
+          <div style={{ padding: 12 }}>
+            <ParametrizacaoForm />
           </div>
         </div>
       )}

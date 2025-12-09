@@ -222,7 +222,7 @@
       "analistaId": "COL002",
       "probabilidade": "Média",
       "impacto": "Baixo",
-      "status": "Aberto",
+      "status": "Encerrado",
       "matriz": "Tecnologia",
       "historico": [
         {
@@ -248,6 +248,11 @@
         {
           "data": "2025-12-08T00:01:36.426Z",
           "evento": "Projeto PRJ-1765152096425 gerado",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:27:47.346Z",
+          "evento": "Status: Aberto → Encerrado",
           "autor": "Sistema"
         }
       ]
@@ -281,7 +286,7 @@
       "id": "PRJ-1765152096425",
       "titulo": "Falha de rede de TI",
       "riscoId": "RSK004",
-      "etapa": "Execução",
+      "etapa": "Concluído",
       "escopo": {
         "objetivo": "Intermitência na rede pode afetar integrações e ERPs."
       },
@@ -355,6 +360,71 @@
           "data": "2025-12-09T02:37:49.823Z",
           "evento": "Etapa: Concluído → Execução",
           "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:00:22.101Z",
+          "evento": "Etapa: Execução → Concluído",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:08:53.115Z",
+          "evento": "Etapa: Concluído → Execução",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:10:19.792Z",
+          "evento": "Etapa: Execução → Concluído",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:10:43.991Z",
+          "evento": "Etapa: Concluído → Execução",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:11:05.381Z",
+          "evento": "Etapa: Execução → Concluído",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:15:05.234Z",
+          "evento": "Etapa: Concluído → Execução",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:17:03.702Z",
+          "evento": "Etapa: Execução → Concluído",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:18:16.857Z",
+          "evento": "Etapa: Concluído → Execução",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:18:52.357Z",
+          "evento": "Etapa: Execução → Concluído",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:20:22.281Z",
+          "evento": "Etapa: Concluído → Execução",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:21:13.243Z",
+          "evento": "Etapa: Execução → Concluído",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:27:42.093Z",
+          "evento": "Etapa: Concluído → Execução",
+          "autor": "Sistema"
+        },
+        {
+          "data": "2025-12-09T03:27:47.327Z",
+          "evento": "Etapa: Execução → Concluído",
+          "autor": "Sistema"
         }
       ],
       "excluido": false,
@@ -426,7 +496,10 @@
           ]
         }
       ],
-      "monitoramento": true
+      "monitoramento": false,
+      "encerramentoTermo": "Termo de Encerramento do Projeto\n\nProjeto: Falha de rede de TI\nID: PRJ-1765152096425\nRisco: RSK004\nResponsável: \nData de Encerramento: 08/12/2025\n\nConsiderando as atividades realizadas e as entregas previstas no escopo, declara-se encerrado o projeto conforme as informações acima.\n\nResumo das entregas:\n- \n\nObservações:\n- ",
+      "encerramentoData": "2025-12-09T03:27:47.317Z",
+      "arquivado": true
     },
     {
       "id": "PRJ-1765163036203",

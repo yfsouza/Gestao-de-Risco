@@ -105,6 +105,29 @@ router.post('/riscos/:id/ocorrencias', (req, res) => {
 router.get('/projetos', (req, res) => res.json(store.getProjetos()));
 router.put('/projetos/:id', (req, res) => res.json(store.updateProjeto(req.params.id, req.body)));
 router.delete('/projetos/:id', (req, res) => { store.deleteProjeto(req.params.id); res.sendStatus(204); });
+// Cron: arquivar projetos que estão em Concluído por mais que config.projectArchiveMinutes
+router.post('/projetos/cron/archive', (req, res) => {
+  const cfg = store.getConfig();
+  const projetos = store.getProjetos();
+  const now = Date.now();
+  const changed: any[] = [];
+  projetos.forEach(p => {
+    if ((p as any).arquivado) return;
+    if (p.etapa === 'Concluído' && (p as any).encerramentoData) {
+      const encerr = new Date((p as any).encerramentoData).getTime();
+      const minutes = Math.floor((now - encerr) / (1000 * 60));
+      if (minutes >= (cfg.projectArchiveMinutes || 1)) {
+        const up = store.updateProjeto(p.id, { arquivado: true });
+        if (up) changed.push(up);
+      }
+    }
+  });
+  res.json({ archived: changed.length, projects: changed });
+});
+
+// Config
+router.get('/config', (req, res) => res.json(store.getConfig()));
+router.put('/config', (req, res) => res.json(store.updateConfig(req.body)));
 // Dev: popular demos
 router.post('/projetos/dev/seed', (req, res) => res.json(store.addDemoProjects()));
 router.post('/dev/seed-all', (req, res) => res.json(store.addDemoData()));

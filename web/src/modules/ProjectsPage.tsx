@@ -97,6 +97,8 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
   const [curr, setCurr] = useState<Projeto | null>(null);
   const [riskInfo, setRiskInfo] = useState<any | null>(null);
   const toast = useToast();
+  const [archiveMinutes, setArchiveMinutes] = useState<number>(1);
+  const [nowTs, setNowTs] = useState<number>(Date.now());
 
   // Função para mover para Planejamento com confirmação de TAP
   const moverParaPlanejamentoComTAP = (projeto: Projeto) => {
@@ -188,10 +190,70 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
     load();
   };
 
-  const handleEncerramento = async (id: string) => {
-    if (!window.confirm('Deseja prosseguir com o encerramento do projeto?')) return;
-    await updateEtapa(id, 'Concluído');
+  // Encerramento modal / termo
+  const [showEncerramentoModal, setShowEncerramentoModal] = useState(false);
+  const [encerramentoProjeto, setEncerramentoProjeto] = useState<Projeto | null>(null);
+  const [termoTexto, setTermoTexto] = useState('');
+  const [editingTermo, setEditingTermo] = useState(false);
+
+  const generateTermo = (p: Projeto) => {
+    const responsavel = base.colaboradores.find(c => c.id === (p as any).responsavelId)?.nome || '';
+    const hoje = new Date().toLocaleDateString('pt-BR');
+    return `Termo de Encerramento do Projeto\n\nProjeto: ${p.titulo}\nID: ${p.id}\nRisco: ${p.riscoId || 'N/A'}\nResponsável: ${responsavel}\nData de Encerramento: ${hoje}\n\nConsiderando as atividades realizadas e as entregas previstas no escopo, declara-se encerrado o projeto conforme as informações acima.\n\nResumo das entregas:\n- \n\nObservações:\n- `;
   };
+
+  const openEncerramentoModal = (p: Projeto) => {
+    setEncerramentoProjeto(p);
+    setTermoTexto(generateTermo(p));
+    setEditingTermo(false);
+    setShowEncerramentoModal(true);
+  };
+
+  const concluirEncerramento = async () => {
+    if (!encerramentoProjeto) return;
+    try {
+      await api.updateProjeto(encerramentoProjeto.id, { etapa: 'Concluído', encerramentoTermo: termoTexto, encerramentoData: new Date().toISOString(), monitoramento: false });
+      // Caso exista risco relacionado, marcar como Encerrado
+      if (encerramentoProjeto.riscoId) {
+        try {
+          await api.updateRisco(encerramentoProjeto.riscoId, { status: 'Encerrado' });
+        } catch (e) {
+          console.warn('Falha ao atualizar status do risco relacionado', e);
+        }
+      }
+      toast.show('Projeto encerrado com sucesso', 'success');
+      setShowEncerramentoModal(false);
+      setEncerramentoProjeto(null);
+      setTermoTexto('');
+      load();
+      // Recarrega riscos ativos/inbox para refletir alteração imediatamente
+      loadRiscosAtivos();
+    } catch (err) {
+      toast.show('Erro ao encerrar projeto', 'error');
+    }
+  };
+
+  // Run archive cron at load to move old closed projects to arquivado
+  useEffect(() => {
+    (async () => {
+      try {
+        await fetch('/api/projetos/cron/archive', { method: 'POST' });
+      } catch (e) { /* ignore */ }
+    })();
+  }, []);
+
+  // Load archive parameter and setup ticking clock to update remaining time badges
+  useEffect(() => {
+    (async () => {
+      try {
+        const cfg: any = await api.getConfig();
+        setArchiveMinutes(cfg.projectArchiveMinutes || 1);
+      } catch (e) { }
+    })();
+
+    const t = setInterval(() => setNowTs(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
 
   const removerProjeto = async (id: string) => {
     if (!window.confirm('Tem certeza que deseja remover este projeto do Kanban?')) return;
@@ -256,9 +318,10 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
       ];
   
       const getProjectsForColumn = (col: { title: string; etapa: Projeto['etapa'] }) => {
-        if (col.title === 'Execução') return projetos.filter(p => p.etapa === 'Execução' && !(p as any).monitoramento);
-        if (col.title === 'Monitoramento') return projetos.filter(p => p.etapa === 'Execução' && !!(p as any).monitoramento);
-        return projetos.filter(p => p.etapa === col.etapa);
+          // Excluir projetos arquivados do Kanban principal
+          if (col.title === 'Execução') return projetos.filter(p => p.etapa === 'Execução' && !(p as any).monitoramento && !(p as any).arquivado);
+          if (col.title === 'Monitoramento') return projetos.filter(p => p.etapa === 'Execução' && !!(p as any).monitoramento && !(p as any).arquivado);
+          return projetos.filter(p => p.etapa === col.etapa && !(p as any).arquivado);
       };
   const byPrazo = (list: Projeto[]) => [...list].sort((a,b) => {
     const va = a.prazo ? new Date(a.prazo).getTime() : Number.MAX_SAFE_INTEGER;
@@ -554,6 +617,57 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
         )}
       </div>
 
+      {/* Arquivados */}
+      <div className="inbox-container excluidos-box" style={{ marginTop: 12 }}>
+        <div className="inbox-header excluidos-header" onClick={() => setExcluidosAberta(!excluidosAberta)}>
+          <div className="inbox-title">
+            <i className="fa-solid fa-archive"></i> 
+            Projetos Arquivados
+            <span className="inbox-badge">{(projetos.filter(p => (p as any).arquivado)).length}</span>
+          </div>
+          <div className="inbox-toggle">
+            <i className={`fa-solid fa-chevron-${excluidosAberta ? 'up' : 'down'}`}></i>
+          </div>
+        </div>
+        {excluidosAberta && (
+          <div className="inbox-body">
+            <div className="inbox-list">
+              {projetos.filter(p => (p as any).arquivado).length === 0 ? (
+                <div className="inbox-empty">
+                  <i className="fa-solid fa-box-archive"></i>
+                  <span>Nenhum projeto arquivado</span>
+                </div>
+              ) : (
+                projetos.filter(p => (p as any).arquivado).map((proj, index) => (
+                  <div key={proj.id} className="inbox-item">
+                    <div className="inbox-item-indicator" style={{ backgroundColor: '#95a5a6' }}></div>
+                    <div className="inbox-item-content">
+                      <div className="inbox-item-header">
+                        <span className="inbox-item-id" style={{ background: '#f0f0f0', color: '#888' }}>{String(index + 1).padStart(3, '0')}</span>
+                        <span className="inbox-item-titulo" style={{ color: '#555' }}>{proj.titulo}</span>
+                      </div>
+                      <div className="inbox-item-badges">
+                        {proj.riscoId && (
+                          <span className="inbox-item-date">
+                            <i className="fa-solid fa-link"></i> Risco: {proj.riscoId}
+                          </span>
+                        )}
+                        {(proj as any).encerramentoData && (
+                          <span className="badge" style={{ marginLeft: 6 }}>{new Date((proj as any).encerramentoData).toLocaleDateString()}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="inbox-item-actions">
+                      <button className="btn-outline btn-small" title="Restaurar Arquivo" onClick={async()=>{ await fetch(`/api/projetos/${proj.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ arquivado: false }) }); load(); }}><i className="fa-solid fa-rotate-left"></i> Restaurar</button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="card">
         <h2>Kanban de Projetos</h2>
       </div>
@@ -576,6 +690,36 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
                     <span style={{ fontSize: 12, color: '#666' }}>Risco: {p.riscoId}</span>
                   </div>
                 )}
+                {(p.etapa === 'Concluído' && ((p as any).encerramentoData || (p as any).encerramentoTermo) && !(p as any).arquivado) && (
+                  (() => {
+                    // If encerramentoData is missing (term saved without timestamp), treat as 'now' so badge shows full countdown
+                    const encerr = (p as any).encerramentoData ? new Date((p as any).encerramentoData).getTime() : nowTs;
+                    // dev debug: console.log for troubleshooting (will appear in browser console)
+                    try { console.debug('Project countdown', p.id, { encerramentoData: (p as any).encerramentoData, nowTs, archiveMinutes }); } catch (e) {}
+                    const secondsElapsed = Math.floor((nowTs - encerr) / 1000);
+                    const totalSeconds = (archiveMinutes || 1) * 60;
+                    const secondsRemaining = totalSeconds - secondsElapsed;
+
+                    const formatRemaining = (s: number) => {
+                      if (s <= 0) return '00:00';
+                      const hrs = Math.floor(s / 3600);
+                      const mins = Math.floor((s % 3600) / 60);
+                      const secs = s % 60;
+                      if (hrs > 0) return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                    };
+
+                    const label = secondsRemaining > 0 ? `Arquiva em ${formatRemaining(secondsRemaining)}` : 'Arquivando';
+                    const bg = secondsRemaining > 0 ? '#fff4e5' : '#fdecea';
+                    const fg = secondsRemaining > 0 ? '#b7791f' : '#c0392b';
+
+                    return (
+                      <div style={{ marginTop: 6 }}>
+                        <span className="badge" style={{ background: bg, color: fg }}>{label}</span>
+                      </div>
+                    );
+                  })()
+                )}
                 {(p as any).tapPdf && (
                   <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
                     <i className="fa-solid fa-file-pdf" style={{ color: '#dc2626' }}></i>
@@ -593,7 +737,7 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
                       <button className="btn-outline btn-small" title={p.etapa==='Backlog' ? 'Já está no Backlog' : (p as any).tapPdf ? 'TAP já foi gerada - não é possível voltar' : 'Mover para Backlog'} disabled={p.etapa==='Backlog' || !!(p as any).tapPdf} onClick={()=>updateEtapa(p.id, 'Backlog')}><i className="fa-solid fa-arrow-left"></i></button>
                       <button className="btn-outline btn-small" title="Mover para Planejamento (Gerar TAP)" disabled={p.etapa==='Planejamento' || p.etapa==='Execução' || !!(p as any).tapPdf} onClick={()=>moverParaPlanejamentoComTAP(p)}><i className="fa-solid fa-list-check"></i></button>
                       <button className="btn-outline btn-small" title="Mover para Execução" disabled={p.etapa==='Execução'} onClick={()=>iniciarFluxoExecucao(p)}><i className="fa-solid fa-person-running"></i></button>
-                      <button className="btn-outline btn-small" title="Mover para Concluído" disabled={p.etapa==='Concluído'} onClick={()=>handleEncerramento(p.id)}><i className="fa-solid fa-flag-checkered"></i></button>
+                      <button className="btn-outline btn-small" title="Mover para Concluído" disabled={p.etapa==='Concluído'} onClick={()=>openEncerramentoModal(p)}><i className="fa-solid fa-flag-checkered"></i></button>
                       {(p.etapa === 'Execução' || p.etapa === 'Concluído') && (
                         (p as any).monitoramento ? (
                           <button className="btn-outline btn-small" title="Remover de Monitoramento" onClick={() => toggleMonitoramento(p.id, false)}>
@@ -744,6 +888,33 @@ export const ProjectsPage: React.FC<{ base: AppState }> = ({ base }) => {
             </button>
           </div>
         </div>
+      </Modal>
+
+      {/* Modal Termo de Encerramento */}
+      <Modal open={showEncerramentoModal} title="Termo de Encerramento do Projeto" onClose={() => setShowEncerramentoModal(false)}>
+        {encerramentoProjeto && (
+          <div style={{ padding: 8 }}>
+            <div style={{ marginBottom: 8 }}>
+              <strong>{encerramentoProjeto.titulo}</strong>
+              <div style={{ fontSize: 12, color: '#666' }}>ID: {encerramentoProjeto.id} {encerramentoProjeto.riscoId ? `| Risco: ${encerramentoProjeto.riscoId}` : ''}</div>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <label style={{ fontWeight: 600 }}>Termo de Encerramento (pré-preenchido)</label>
+              <textarea
+                value={termoTexto}
+                onChange={e => setTermoTexto(e.target.value)}
+                readOnly={!editingTermo}
+                rows={12}
+                style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ddd', resize: 'vertical' }}
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <button className="btn btn-secondary" onClick={() => { setEditingTermo(prev => !prev); }}>{editingTermo ? 'Bloquear edição' : 'Abrir para edição'}</button>
+              <button className="btn btn-primary" onClick={concluirEncerramento}><i className="fa-solid fa-check"></i> Concluir</button>
+              <button className="btn btn-secondary" onClick={() => { setShowEncerramentoModal(false); setEncerramentoProjeto(null); setTermoTexto(''); setEditingTermo(false); }}>Cancelar</button>
+            </div>
+          </div>
+        )}
       </Modal>
 
       {/* Modal Confirmação Execução (pergunta se deseja adicionar etapas) */}

@@ -45,6 +45,9 @@ export const api = {
   // Projetos
   projetos: () => req('/api/projetos'),
   updateProjeto: (id: string, data: any) => req(`/api/projetos/${id}`, 'PUT', data),
+  runArchiveCron: () => req('/api/projetos/cron/archive', 'POST'),
+  getConfig: () => req('/api/config'),
+  updateConfig: (data: any) => req('/api/config', 'PUT', data),
 
   // Relatórios
   dashboard: () => req('/api/relatorios/dashboard'),

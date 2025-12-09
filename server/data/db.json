@@ -1,4 +1,5 @@
 {
+  "config": { "projectArchiveMinutes": 1 },
   "empresas": [
     { "id": "EMP001", "nome": "Matriz Lucas do Rio Verde" },
     { "id": "EMP002", "nome": "Filial Sinop" },

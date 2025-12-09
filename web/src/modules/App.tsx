@@ -46,7 +46,32 @@ export type AppState = {
 };
 
 export const App: React.FC = () => {
-  const [screen, setScreen] = useState<'risks'|'risks-form'|'projects'|'committee'|'reports'|'admin'>('risks');
+  const allowedScreens = ['risks','risks-form','projects','committee','reports','admin'] as const;
+  const parseScreenFromHash = () => {
+    try {
+      const h = (window.location.hash || '').replace(/^#\/?/, '');
+      if (allowedScreens.includes(h as any)) return h as any;
+    } catch (e) { /* ignore */ }
+    return 'risks' as const;
+  };
+
+  const [screen, _setScreen] = useState<'risks'|'risks-form'|'projects'|'committee'|'reports'|'admin'>(parseScreenFromHash());
+  // wrapper to keep hash in sync so F5 preserves the current screen
+  const setScreen = (s: typeof screen | ((prev: typeof screen) => typeof screen)) => {
+    const newScreen = typeof s === 'function' ? s(screen) : s;
+    _setScreen(newScreen as any);
+    try { window.location.hash = '/' + newScreen; } catch (e) { /* ignore */ }
+  };
+
+  // respond to manual hash changes (back/forward / F5 navigation)
+  React.useEffect(() => {
+    const onHash = () => {
+      const parsed = parseScreenFromHash();
+      _setScreen(parsed as any);
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
   const [base, setBase] = useState<AppState>({ empresas: [], colaboradores: [], stakeholdersGrupos: [] });
   const [selectedRiskId, setSelectedRiskId] = useState<string | null>(null);
 

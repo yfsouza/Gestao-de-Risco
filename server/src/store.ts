@@ -60,6 +60,10 @@ const ensureData = () => {
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
   if (!fs.existsSync(filePath)) {
     const initial: DB = {
+      // Global configuration
+      config: {
+        projectArchiveMinutes: 1
+      },
       empresas: [
         { id: 'EMP001', nome: 'Matriz Lucas do Rio Verde' },
         { id: 'EMP002', nome: 'Filial Sinop' }
@@ -195,6 +199,8 @@ const ensureData = () => {
   }
 };
 
+type Config = { projectArchiveMinutes: number };
+
 const readDB = (): DB => {
   ensureData();
   return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as DB;
@@ -205,6 +211,17 @@ const writeDB = (db: DB) => {
 };
 
 export class DataStore {
+  // Config
+  getConfig(): Config {
+    const db = readDB() as any;
+    return db.config || { projectArchiveMinutes: 1 };
+  }
+  updateConfig(c: Partial<Config>) {
+    const db = readDB() as any;
+    db.config = { ...(db.config || { projectArchiveMinutes: 1 }), ...c };
+    writeDB(db);
+    return db.config;
+  }
   getEmpresas() { return readDB().empresas; }
   addEmpresa(emp: Empresa) { const db = readDB(); db.empresas.push(emp); writeDB(db); return emp; }
   deleteEmpresa(id: string) { const db = readDB(); db.empresas = db.empresas.filter(e => e.id !== id); writeDB(db); }
